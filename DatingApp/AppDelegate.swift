@@ -7,13 +7,14 @@
 //
 
 import UIKit
-
+import Firebase
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        FirebaseApp.configure()
        //초기화면을 ViewController 지정
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()

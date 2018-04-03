@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>486463143373-oi98idi9eq33d4fmf94arf4ndpjfb9dp.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.486463143373-oi98idi9eq33d4fmf94arf4ndpjfb9dp</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDRko7mMm6imvUFz3S8gw3Xs8wEGghYYPI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>486463143373</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.happy.DatingApp</string>
+	<key>PROJECT_ID</key>
+	<string>chatgame-e33b5</string>
+	<key>STORAGE_BUCKET</key>
+	<string>chatgame-e33b5.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:486463143373:ios:99b88e4aa47f143b</string>
+	<key>DATABASE_URL</key>
+	<string>https://chatgame-e33b5.firebaseio.com</string>
+</dict>
+</plist>
