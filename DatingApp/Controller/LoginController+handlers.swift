@@ -35,9 +35,12 @@ extension LoginController: UIImagePickerControllerDelegate, UINavigationControll
             //유일한 스트링 값
             let imageName = NSUUID().uuidString
             //firebase 저장소 위치 가져오기
-            let storageRef = Storage.storage().reference().child("profile_images").child("\(imageName).png")
+            let storageRef = Storage.storage().reference().child("profile_images").child("\(imageName).jpg")
             //image 파일 변환
-            if let uploadData = UIImagePNGRepresentation(self.profileImageView.image!) {
+            
+            //더 안전하게
+            if let profileImage = self.profileImageView.image, let uploadData = UIImageJPEGRepresentation(profileImage, 0.1){
+                
                 //업로드
                 storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
                     if let error = error {
@@ -67,6 +70,9 @@ extension LoginController: UIImagePickerControllerDelegate, UINavigationControll
                 return
             }
             
+            let user = User(dic:values)
+            //등록 할때 메시지 컨트롤러에 있는 setupnavbar 함수 호출
+            self.messagesController?.setupNavBarWithUser(user: user)
             self.dismiss(animated: true, completion: nil)
         })
     }

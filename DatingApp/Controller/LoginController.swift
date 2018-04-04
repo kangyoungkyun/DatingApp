@@ -9,7 +9,9 @@
 import UIKit
 import Firebase
 class LoginController: UIViewController {
-
+    
+var messagesController: MessageController?
+    
     //컨테이너 뷰
     let inputsContainerView: UIView = {
         let view = UIView()
@@ -35,7 +37,6 @@ class LoginController: UIViewController {
     }()
     
     
-    
     @objc func handleLoginRegister(){
         if loginRegisterSegmentedControl.selectedSegmentIndex == 0 {
             handleLogin()
@@ -52,18 +53,18 @@ class LoginController: UIViewController {
         }
         
         Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
+            
             if let error = error {
                 print(error)
                 return
             }
+            //로그인 할때 네비게이션 바 데이터 변경 함수 호출
+            self.messagesController?.fetchUserAndSetupNavBarTitle()
             //로그인 성공시 로그인창 내려주기
             self.dismiss(animated: true, completion: nil)
         }
         
     }
-    
-
-    
     
     //이름 텍스트 필드
     let nameTextField: UITextField = {
