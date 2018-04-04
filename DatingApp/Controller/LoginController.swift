@@ -44,7 +44,6 @@ class LoginController: UIViewController {
         }
     }
     
-    
     //로그인 버튼 액션
     func handleLogin(){
         guard let email = emailTextField.text, let password = passwordTextField.text else {
@@ -63,42 +62,7 @@ class LoginController: UIViewController {
         
     }
     
-    //등록 버튼 액션
-    func handleRegister(){
-        
-       //유효성 검사
-        guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text else {
-            print("값이 없거나 잘못된 형식")
-            return
-        }
-        //파이어베이스 가입
-        Auth.auth().createUser(withEmail: email, password: password) { (user, error) in
-            //에러 발생
-            if let error = error{
-                print(error)
-                return
-            }
-            //가입후 uid  넘겨준다. uid 가 nil이면 return
-            guard let uid = user?.uid else {
-                return
-            }
-            //유저가 저장될 firebase 위치
-            let ref = Database.database().reference()
-            let uesrReference = ref.child("users").child(uid)
-            //딕셔너리 타입으로 값을 넣어준다.
-            let values = ["name":name,"email":email]
-            uesrReference.updateChildValues(values, withCompletionBlock: { (err, ref) in
-                if let err = err {
-                    print(err)
-                    return
-                }
-                
-                print("가입 성공")
-            })
-            
-        }
-        
-    }
+
     
     
     //이름 텍스트 필드
@@ -139,11 +103,14 @@ class LoginController: UIViewController {
         return tf
     }()
     //프로필 이미지
-    let profileImageView: UIImageView = {
+    lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "main2")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
+        //클릭시 이벤트 등록
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSelectProfileImageView)))
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
     
