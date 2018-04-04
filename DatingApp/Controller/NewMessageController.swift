@@ -48,15 +48,22 @@ class NewMessageController: UITableViewController {
     //테이블 구성
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? UserCell
         
         let user = users[indexPath.row]
-        cell.textLabel?.text = user.name
-        cell.detailTextLabel?.text = user.email
+        cell?.textLabel?.text = user.name
+        cell?.detailTextLabel?.text = user.email
+        //이미지 캐치 확인 함수 호출
+        if let profileImageUrl = user.profileImageUrl {
+            cell?.profileImageView.loadImageUsingCacheWithUrlString(profileImageUrl)
+        }
         
-        return cell
+        return cell!
     }
     
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 72
+    }
     
     //닫기 함수
     @objc func handleCancel() {
@@ -66,10 +73,32 @@ class NewMessageController: UITableViewController {
 
 //테이블 뷰 셀 커스터 마이징
 class UserCell: UITableViewCell {
+    //cell에 들어갈 이미지 객체 생성
+    let profileImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.cornerRadius = 24
+        imageView.layer.masksToBounds = true
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = .brown
+        addSubview(profileImageView)
+        
+        profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
+        profileImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        profileImageView.widthAnchor.constraint(equalToConstant: 48).isActive = true
+        profileImageView.heightAnchor.constraint(equalToConstant: 48).isActive = true
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        textLabel?.frame = CGRect(x: 64, y: textLabel!.frame.origin.y - 2, width: textLabel!.frame.width, height: textLabel!.frame.height)
+        
+        detailTextLabel?.frame = CGRect(x: 64, y: detailTextLabel!.frame.origin.y + 2, width: detailTextLabel!.frame.width, height: detailTextLabel!.frame.height)
     }
     
     required init?(coder aDecoder: NSCoder) {

@@ -13,6 +13,7 @@
 		52419BC420746CA300E4DB8C /* NewMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52419BC320746CA300E4DB8C /* NewMessageController.swift */; };
 		52419BC620746DED00E4DB8C /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52419BC520746DED00E4DB8C /* User.swift */; };
 		52419BC92074783D00E4DB8C /* LoginController+handlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52419BC82074783D00E4DB8C /* LoginController+handlers.swift */; };
+		52419BCC2074858100E4DB8C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52419BCB2074858100E4DB8C /* Extensions.swift */; };
 		525ECFFB20736CB0007E60B1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525ECFFA20736CB0007E60B1 /* AppDelegate.swift */; };
 		525ECFFD20736CB0007E60B1 /* MessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525ECFFC20736CB0007E60B1 /* MessageController.swift */; };
 		525ED00020736CB0007E60B1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 525ECFFE20736CB0007E60B1 /* Main.storyboard */; };
@@ -31,6 +32,7 @@
 		52419BC320746CA300E4DB8C /* NewMessageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMessageController.swift; sourceTree = "<group>"; };
 		52419BC520746DED00E4DB8C /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		52419BC82074783D00E4DB8C /* LoginController+handlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LoginController+handlers.swift"; sourceTree = "<group>"; };
+		52419BCB2074858100E4DB8C /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		525ECFF720736CB0007E60B1 /* DatingApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DatingApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		525ECFFA20736CB0007E60B1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		525ECFFC20736CB0007E60B1 /* MessageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageController.swift; sourceTree = "<group>"; };
@@ -64,6 +66,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		52419BCA2074856800E4DB8C /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				52419BCB2074858100E4DB8C /* Extensions.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		525ECFEE20736CB0007E60B1 = {
 			isa = PBXGroup;
 			children = (
@@ -85,6 +95,7 @@
 		525ECFF920736CB0007E60B1 /* DatingApp */ = {
 			isa = PBXGroup;
 			children = (
+				52419BCA2074856800E4DB8C /* Helpers */,
 				52419BC720746DF100E4DB8C /* Model */,
 				525ED01020737466007E60B1 /* pic */,
 				525ECFFA20736CB0007E60B1 /* AppDelegate.swift */,
@@ -281,6 +292,7 @@
 				525ED00D20736DAC007E60B1 /* LoginController.swift in Sources */,
 				52419BC620746DED00E4DB8C /* User.swift in Sources */,
 				525ECFFB20736CB0007E60B1 /* AppDelegate.swift in Sources */,
+				52419BCC2074858100E4DB8C /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

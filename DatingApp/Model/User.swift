@@ -12,10 +12,11 @@ class User: NSObject {
     
     var name : String?
     var email : String?
-    
+    var profileImageUrl: String?
     init(dic:[String:Any]){
         self.name = dic["name"] as? String ?? ""
         self.email = dic["email"] as? String ?? ""
+         self.profileImageUrl = dic["profileImageUrl"] as? String
         
     }
     
