@@ -34,7 +34,6 @@ class MessageController: UITableViewController {
             //로그인 되었으면 네비게이션 타이틀의 제목을 유저 이름으로 지정해준다.
              fetchUserAndSetupNavBarTitle()
             
-
         }
     }
     
@@ -62,7 +61,7 @@ class MessageController: UITableViewController {
     //네비게이션 타이틀 바 변경해주기
     func setupNavBarWithUser(user: User){
         print("사진있는 타이틀!")
-        let titleView = UIView()
+        let titleView = MyUIView()
         
         titleView.frame = CGRect(x:0, y:0, width: 100, height: 50)
         //titleView.backgroundColor = UIColor.blue
@@ -107,9 +106,19 @@ class MessageController: UITableViewController {
         containerView.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
         self.navigationItem.titleView = titleView
     
-        //titleView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showChatController)))
-        
+       
+        titleView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showChatController)))
+        //containerView.isUserInteractionEnabled = true
     }
+    
+    //이름 클릭
+    @objc func showChatController(){
+        print("이름 클릭~~~")
+        let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
+        navigationController?.pushViewController(chatLogController, animated: true)
+    }
+    
+    
     
     //새로운 메시지 쓰기
     @objc func handleNewMessage(){
