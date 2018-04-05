@@ -9,6 +9,8 @@
 import UIKit
 import Firebase
 class MessageController: UITableViewController {
+    
+     let cellId = "cellId"
      var messagesController: MessageController?
     var ref: DatabaseReference!
     
@@ -20,6 +22,8 @@ class MessageController: UITableViewController {
         
         let image = UIImage(named: "new_message_icon")
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(handleNewMessage))
+        
+        tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
         
         //로그인or로그아웃 체크
         checkIfUserIsLoggedIn()
@@ -36,7 +40,10 @@ class MessageController: UITableViewController {
         ref.observe(.childAdded, with: { (snapshot) in
             
             if let dictionary = snapshot.value as? [String: AnyObject] {
+                
+                print("gg \(dictionary)")
                 let message = Message(dic: dictionary)
+                print(message)
                 self.messages.append(message)
                 
                 //this will crash because of background thread, so lets call this on dispatch_async main thread
@@ -53,14 +60,17 @@ class MessageController: UITableViewController {
     }
     //테이블 구성
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cellId")
-        
+       let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! UserCell
         let message = messages[indexPath.row]
-        cell.textLabel?.text = message.toId
-        cell.detailTextLabel?.text = message.text
+        cell.message = message
         
         return cell
     }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 72
+    }
+    
     
     //로그인or로그아웃 체크 함수
     func checkIfUserIsLoggedIn(){

@@ -24,6 +24,7 @@
 		529E780A20760EDD00B0FD5C /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529E780920760EDD00B0FD5C /* ChatLogController.swift */; };
 		529E780C2076127400B0FD5C /* MyUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529E780B2076127400B0FD5C /* MyUIView.swift */; };
 		529E780E2076217600B0FD5C /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529E780D2076217600B0FD5C /* Message.swift */; };
+		529E78112076288200B0FD5C /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529E78102076288200B0FD5C /* UserCell.swift */; };
 		52AC441F2073CA8400B9D753 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 52AC441E2073CA8300B9D753 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +49,7 @@
 		529E780920760EDD00B0FD5C /* ChatLogController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatLogController.swift; sourceTree = "<group>"; };
 		529E780B2076127400B0FD5C /* MyUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyUIView.swift; sourceTree = "<group>"; };
 		529E780D2076217600B0FD5C /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		529E78102076288200B0FD5C /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		52AC441E2073CA8300B9D753 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E12789A0F6235756676021CA /* Pods-DatingApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DatingApp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DatingApp/Pods-DatingApp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -102,6 +104,7 @@
 		525ECFF920736CB0007E60B1 /* DatingApp */ = {
 			isa = PBXGroup;
 			children = (
+				529E780F2076285E00B0FD5C /* View */,
 				52419BCA2074856800E4DB8C /* Helpers */,
 				52419BC720746DF100E4DB8C /* Model */,
 				525ED01020737466007E60B1 /* pic */,
@@ -137,6 +140,14 @@
 				525ED015207377B4007E60B1 /* main2.png */,
 			);
 			path = pic;
+			sourceTree = "<group>";
+		};
+		529E780F2076285E00B0FD5C /* View */ = {
+			isa = PBXGroup;
+			children = (
+				529E78102076288200B0FD5C /* UserCell.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		817029A15CB160C922C8132D /* Frameworks */ = {
@@ -304,6 +315,7 @@
 				52419BC620746DED00E4DB8C /* User.swift in Sources */,
 				529E780E2076217600B0FD5C /* Message.swift in Sources */,
 				525ECFFB20736CB0007E60B1 /* AppDelegate.swift in Sources */,
+				529E78112076288200B0FD5C /* UserCell.swift in Sources */,
 				52419BCC2074858100E4DB8C /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

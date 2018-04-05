@@ -15,9 +15,9 @@ class Message: NSObject {
     var toId: String?
     
     init(dic:[String:Any]) {
-        self.fromId = dic["fromId"] as? String
+        self.fromId = dic["fromid"] as? String
         self.text = dic["text"] as? String
-        self.toId = dic["toId"] as? String
+        self.toId = dic["toid"] as? String
         self.timestamp = dic["timestamp"] as? NSNumber
     }
 
