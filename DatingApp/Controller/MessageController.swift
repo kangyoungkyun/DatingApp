@@ -5,11 +5,33 @@
 //  Created by MacBookPro on 2018. 4. 3..
 //  Copyright © 2018년 MacBookPro. All rights reserved.
 //
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+    switch (lhs, rhs) {
+    case let (l?, r?):
+        return l < r
+    case (nil, _?):
+        return true
+    default:
+        return false
+    }
+}
 
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+    switch (lhs, rhs) {
+    case let (l?, r?):
+        return l > r
+    default:
+        return rhs < lhs
+    }
+}
 import UIKit
 import Firebase
 class MessageController: UITableViewController {
-    
+
      let cellId = "cellId"
      var messagesController: MessageController?
     var ref: DatabaseReference!
@@ -34,6 +56,7 @@ class MessageController: UITableViewController {
 
     }
     var messages = [Message]()
+    var messagesDictionary = [String: Message]()
     //메시지 기록 가져오기
     func observeMessages() {
         let ref = Database.database().reference().child("messages")
@@ -41,10 +64,23 @@ class MessageController: UITableViewController {
             
             if let dictionary = snapshot.value as? [String: AnyObject] {
                 
-                print("gg \(dictionary)")
                 let message = Message(dic: dictionary)
-                print(message)
-                self.messages.append(message)
+         
+                //self.messages.append(message)
+                //let message = Message(dictionary: dictionary)
+                //                self.messages.append(message)
+                
+                if let toId = message.toId {
+                    self.messagesDictionary[toId] = message
+                    
+                    self.messages = Array(self.messagesDictionary.values)
+                    self.messages.sort(by: { (message1, message2) -> Bool in
+                        
+                        return message1.timestamp?.intValue > message2.timestamp?.intValue
+                    })
+                }
+                
+                
                 
                 //this will crash because of background thread, so lets call this on dispatch_async main thread
                 DispatchQueue.main.async(execute: {
