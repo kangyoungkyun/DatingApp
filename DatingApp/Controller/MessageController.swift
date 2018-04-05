@@ -11,6 +11,8 @@ import Firebase
 class MessageController: UITableViewController {
      var messagesController: MessageController?
     var ref: DatabaseReference!
+    
+    //진입점
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -21,7 +23,43 @@ class MessageController: UITableViewController {
         
         //로그인or로그아웃 체크
         checkIfUserIsLoggedIn()
+        
+        
+        //메시지 기록 가져오기
+        observeMessages()
 
+    }
+    var messages = [Message]()
+    //메시지 기록 가져오기
+    func observeMessages() {
+        let ref = Database.database().reference().child("messages")
+        ref.observe(.childAdded, with: { (snapshot) in
+            
+            if let dictionary = snapshot.value as? [String: AnyObject] {
+                let message = Message(dic: dictionary)
+                self.messages.append(message)
+                
+                //this will crash because of background thread, so lets call this on dispatch_async main thread
+                DispatchQueue.main.async(execute: {
+                    self.tableView.reloadData()
+                })
+            }
+            
+        }, withCancel: nil)
+    }
+    //테이블 행
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return messages.count
+    }
+    //테이블 구성
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cellId")
+        
+        let message = messages[indexPath.row]
+        cell.textLabel?.text = message.toId
+        cell.detailTextLabel?.text = message.text
+        
+        return cell
     }
     
     //로그인or로그아웃 체크 함수
@@ -107,14 +145,15 @@ class MessageController: UITableViewController {
         self.navigationItem.titleView = titleView
     
        
-        titleView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showChatController)))
+        //titleView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showChatController)))
         //containerView.isUserInteractionEnabled = true
     }
     
     //이름 클릭
-    @objc func showChatController(){
-        print("이름 클릭~~~")
+    func showChatControllerForUser(user : User){
+        print(" message controller에서 user 정보를 chatlogVC 넘겨줌~~~")
         let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
+        chatLogController.user = user
         navigationController?.pushViewController(chatLogController, animated: true)
     }
     
@@ -123,6 +162,9 @@ class MessageController: UITableViewController {
     //새로운 메시지 쓰기
     @objc func handleNewMessage(){
         let newMessageController = NewMessageController()
+        //newMessageContrller에 있는 messageController는 나 자신이야
+        //newMessageController에서 messagecontroller에 있는 showchatcontroller 함수를 사용해야 하기 때문에
+        newMessageController.messagesController = self
         let navController = UINavigationController(rootViewController: newMessageController)
         present(navController, animated: true, completion: nil)
     }

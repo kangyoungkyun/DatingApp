@@ -11,6 +11,13 @@ import Firebase
 
 class ChatLogController: UICollectionViewController,UITextFieldDelegate {
 
+    //newMessagesController -> messagesController -> chatLog 순으로 user 정보를 넘겨줌
+    var user: User? {
+        didSet {
+            navigationItem.title = user?.name
+        }
+    }
+    
     //채팅창 택스트 필드
     lazy var inputTextField:UITextField = {
       let textField = UITextField()
@@ -23,7 +30,6 @@ class ChatLogController: UICollectionViewController,UITextFieldDelegate {
     //진입점
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "채팅 로그"
         collectionView?.backgroundColor = UIColor.white
         
         setupInputComponents()
@@ -34,7 +40,7 @@ class ChatLogController: UICollectionViewController,UITextFieldDelegate {
         //채팅입력창 묶을 콘테이너 박스
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.backgroundColor = .yellow
+        
         view.addSubview(containerView)
         //콘테이너 박스 위치 크기 조정
         containerView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
@@ -77,7 +83,12 @@ class ChatLogController: UICollectionViewController,UITextFieldDelegate {
     @objc func handleSend(){
         let ref = Database.database().reference().child("messages")
         let childRef = ref.childByAutoId()
-        let values = ["text" : inputTextField.text! , "name" : "kangyoung"]
+        
+        let toId = user?.id!
+        let fromId = Auth.auth().currentUser?.uid
+        let timestamp = Int(Date().timeIntervalSince1970)
+        
+        let values = ["text" : inputTextField.text! , "toid" : toId, "fromid":fromId, "timestamp":timestamp] as [String: Any]
         childRef.updateChildValues(values)
     }
     

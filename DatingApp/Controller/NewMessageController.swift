@@ -29,6 +29,7 @@ class NewMessageController: UITableViewController {
             if let dictionary = snapshot.value as? [String: AnyObject] {
                 //firebase의 키 값과 User 데이터 모델의 변수 값이 같아야 함
                 let user = User(dic: dictionary)
+                user.id = snapshot.key //user 식별자도 함께 넣어준다.
                 self.users.append(user)
                 
                 //그냥 쓰면 백그라운드 쓰레드라서 충돌남 dispatch_async 사용해야함
@@ -64,6 +65,20 @@ class NewMessageController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 72
     }
+    
+    
+    //유저 행을 클릭했을 때
+    var messagesController : MessageController?
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        dismiss(animated: true) {
+            print("유저 목록 닫기")
+            let user = self.users[indexPath.row]
+            //messagecontroller에 있는 showchatcontroller 함수를 사용해야 함
+            self.messagesController?.showChatControllerForUser(user: user)
+        }
+    }
+    
+    
     
     //닫기 함수
     @objc func handleCancel() {
