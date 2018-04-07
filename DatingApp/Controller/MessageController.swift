@@ -54,7 +54,7 @@ class MessageController: UITableViewController {
         //observeMessages()
         
         //유저별 메시지 기록 가져오기
-        observeUserMessage()
+        //observeUserMessage()
         
     }
     
@@ -185,7 +185,15 @@ class MessageController: UITableViewController {
     
     //네비게이션 타이틀 바 변경해주기
     func setupNavBarWithUser(user: User){
-        print("사진있는 타이틀!")
+        //채팅내용 다 지워주고 다시 호출
+        messages.removeAll()
+        messagesDictionary.removeAll()
+        tableView.reloadData()
+        //유저별 메시지 기록 가져오기
+        observeUserMessage()
+        
+        
+        print("사진있는 타이틀! 호출")
         let titleView = MyUIView()
         
         titleView.frame = CGRect(x:0, y:0, width: 100, height: 50)
