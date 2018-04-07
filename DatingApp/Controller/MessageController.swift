@@ -97,7 +97,7 @@ class MessageController: UITableViewController {
     }
     
     
-
+    
     //메시지 기록 가져오기
     func observeMessages() {
         let ref = Database.database().reference().child("messages")
@@ -151,17 +151,17 @@ class MessageController: UITableViewController {
     //메시지 내용을 클릭했을 때
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let message = messages[indexPath.row]
-       
+        
         let chatPartnerId = message.chatPartnerId()
         
         let ref = Database.database().reference().child("users").child(chatPartnerId)
         ref.observe(.value) { (snapshot) in
-            print(snapshot)
             guard let dictionary = snapshot.value as? [String:AnyObject] else {
                 return
             }
             //클릭했을 때 유저 정보 가져와서 showChatController에 넣어주기
             let user = User(dic: dictionary)
+            user.id = chatPartnerId
             self.showChatControllerForUser(user: user)
             
         }

@@ -9,14 +9,50 @@
 import UIKit
 import Firebase
 
-class ChatLogController: UICollectionViewController,UITextFieldDelegate {
+class ChatLogController: UICollectionViewController,UITextFieldDelegate,UICollectionViewDelegateFlowLayout {
 
     //newMessagesController -> messagesController -> chatLog 순으로 user 정보를 넘겨줌
     var user: User? {
         didSet {
             navigationItem.title = user?.name
+            observeMessage()
         }
     }
+    
+    var messages = [Message]()
+    func observeMessage(){
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
+        }
+        //user-messages에서 내가 쓰고, 내가 받은 메시지들의 id를 가져온다.
+        let userMessagesRef = Database.database().reference().child("user-messages").child(uid)
+        userMessagesRef.observe(.childAdded) { (snapshot) in
+            
+            //그 내용을 가져온다.
+            let messageId = snapshot.key
+            let messagesRef = Database.database().reference().child("messages").child(messageId)
+            messagesRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                //nil값 검사
+                guard let dictionary = snapshot.value as? [String:AnyObject] else {
+                    return
+                }
+                //모두 메시지 dto에 넣어준다.
+                let message = Message(dic: dictionary)
+                //message.setValuesForKeys(dictionary)
+                //파트너 아이디와 내가 클릭한 사람의 아이디가 같다면 그 아이디에 해당하는 내용만 가져와라
+                if message.chatPartnerId() == self.user?.id{
+                    self.messages.append(message)
+                    //백그라운드 쓰레드
+                    DispatchQueue.main.async(execute: {
+                        self.collectionView?.reloadData()
+                    })
+                    
+                }
+                
+            })
+        }
+    }
+    
     
     //채팅창 택스트 필드
     lazy var inputTextField:UITextField = {
@@ -31,11 +67,27 @@ class ChatLogController: UICollectionViewController,UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView?.backgroundColor = UIColor.white
-        
+        collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
         setupInputComponents()
     
     }
-
+    
+    let cellId = "cellId"
+    
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return messages.count
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
+        cell.backgroundColor = UIColor.blue
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: view.frame.width, height: 80)
+    }
+    
     func setupInputComponents(){
         //채팅입력창 묶을 콘테이너 박스
         let containerView = UIView()
