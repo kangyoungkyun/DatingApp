@@ -90,12 +90,13 @@ class ChatLogController: UICollectionViewController,UITextFieldDelegate {
         
         let values = ["text" : inputTextField.text! , "toid" : toId, "fromid":fromId, "timestamp":timestamp] as [String: Any]
         //childRef.updateChildValues(values)
-        
+        //메시지 내용을 넣고
         childRef.updateChildValues(values) { (error, ref) in
             if error != nil{
                 print(error)
                 return
             }
+            //내아이디가 들어간다.
             let userMessagesRef = Database.database().reference().child("user-messages").child(fromId!)
             let messageId = childRef.key
             userMessagesRef.updateChildValues([messageId:1])

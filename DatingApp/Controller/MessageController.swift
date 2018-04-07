@@ -31,9 +31,9 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
 import UIKit
 import Firebase
 class MessageController: UITableViewController {
-
-     let cellId = "cellId"
-     var messagesController: MessageController?
+    
+    let cellId = "cellId"
+    var messagesController: MessageController?
     var ref: DatabaseReference!
     
     //진입점
@@ -50,13 +50,54 @@ class MessageController: UITableViewController {
         //로그인or로그아웃 체크
         checkIfUserIsLoggedIn()
         
-        
         //메시지 기록 가져오기
-        observeMessages()
-
+        //observeMessages()
+        
+        //유저별 메시지 기록 가져오기
+        observeUserMessage()
+        
     }
+    
     var messages = [Message]()
     var messagesDictionary = [String: Message]()
+    //유저별 메시지 기록 가져오기
+    func observeUserMessage(){
+        //내가 로그인한 아이디
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
+        }
+        let ref = Database.database().reference().child("user-messages").child(uid)
+        ref.observe(.childAdded) { (snapshot) in
+            
+            let messageId = snapshot.key
+            let messagesReference = Database.database().reference().child("messages").child(messageId)
+            messagesReference.observeSingleEvent(of: .value, with: { (snapshot) in
+                print(snapshot) //Snap (-L9SalCeOBfqY6VvGo71) 1 - 메시지 아이디가 나온다.
+                
+                if let dictionary = snapshot.value as? [String: AnyObject] {
+                    
+                    let message = Message(dic: dictionary)
+                    
+                    if let toId = message.toId {
+                        self.messagesDictionary[toId] = message
+                        
+                        self.messages = Array(self.messagesDictionary.values)
+                        self.messages.sort(by: { (message1, message2) -> Bool in
+                            
+                            return message1.timestamp?.intValue > message2.timestamp?.intValue
+                        })
+                    }
+                    DispatchQueue.main.async(execute: {
+                        self.tableView.reloadData()
+                    })
+                }
+                
+            })
+        }
+    }
+    
+    
+
     //메시지 기록 가져오기
     func observeMessages() {
         let ref = Database.database().reference().child("messages")
@@ -65,7 +106,7 @@ class MessageController: UITableViewController {
             if let dictionary = snapshot.value as? [String: AnyObject] {
                 
                 let message = Message(dic: dictionary)
-         
+                
                 //self.messages.append(message)
                 //let message = Message(dictionary: dictionary)
                 //                self.messages.append(message)
@@ -96,7 +137,7 @@ class MessageController: UITableViewController {
     }
     //테이블 구성
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-       let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! UserCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! UserCell
         let message = messages[indexPath.row]
         cell.message = message
         
@@ -116,7 +157,7 @@ class MessageController: UITableViewController {
         }else{
             
             //로그인 되었으면 네비게이션 타이틀의 제목을 유저 이름으로 지정해준다.
-             fetchUserAndSetupNavBarTitle()
+            fetchUserAndSetupNavBarTitle()
             
         }
     }
@@ -139,7 +180,7 @@ class MessageController: UITableViewController {
                 
             }
         }, withCancel: nil)
-       
+        
     }
     
     //네비게이션 타이틀 바 변경해주기
@@ -189,8 +230,8 @@ class MessageController: UITableViewController {
         containerView.centerXAnchor.constraint(equalTo: titleView.centerXAnchor).isActive = true
         containerView.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
         self.navigationItem.titleView = titleView
-    
-       
+        
+        
         //titleView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showChatController)))
         //containerView.isUserInteractionEnabled = true
     }
@@ -225,7 +266,7 @@ class MessageController: UITableViewController {
             print(logError)
         }
         
-         messagesController?.fetchUserAndSetupNavBarTitle()
+        messagesController?.fetchUserAndSetupNavBarTitle()
         
         let loginController = LoginController()
         loginController.messagesController = self
