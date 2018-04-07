@@ -13,19 +13,9 @@ class UserCell: UITableViewCell {
     
     var message:Message?{
         didSet{
-            
-            if let toId = message?.toId{
-                let ref = Database.database().reference().child("users").child(toId)
-                ref.observeSingleEvent(of: .value, with: { (snap) in
-                    if let dictionary = snap.value as? [String:AnyObject]{
-                        self.textLabel?.text = dictionary["name"] as? String
-                       
-                        if let profileImageUrl = dictionary["profileImageUrl"] as? String{
-                            self.profileImageView.loadImageUsingCacheWithUrlString(profileImageUrl)
-                        }
-                    }
-                })
-            }
+            //프로필이미지
+            setupNameAndProfileImage()
+
             self.detailTextLabel?.text = message?.text
             //데이터 포멧 변경 해주기
             if let seconds = message?.timestamp?.doubleValue {
@@ -36,6 +26,36 @@ class UserCell: UITableViewCell {
                 timeLabel.text = dateFormatter.string(from: timestampDate)
             }
             
+        }
+    }
+    //프로필 이미지 함수
+    private func setupNameAndProfileImage(){
+        let chatPartnerId: String?
+        
+        //내가 만약 메시지를 보낸 사람이라면
+        if message?.fromId == Auth.auth().currentUser?.uid{
+            //파트너아이디는 toid 로 지정
+            chatPartnerId = message?.toId
+        }else{
+            //내가 메시지를 보낸 사람이 아니라면, 파트너 아이디는 fromid로 지정
+            chatPartnerId = message?.fromId
+        }
+        
+        //ex) test4(나)가 test2에게 메시지를 보내면
+        //test4 메시지창에는 test2의 사진이 뜨고
+        //test2의 메시지 창에는 test4의 사진이 뜬다.
+        
+        if let id = chatPartnerId{
+            let ref = Database.database().reference().child("users").child(id)
+            ref.observeSingleEvent(of: .value, with: { (snap) in
+                if let dictionary = snap.value as? [String:AnyObject]{
+                    self.textLabel?.text = dictionary["name"] as? String
+                    
+                    if let profileImageUrl = dictionary["profileImageUrl"] as? String{
+                        self.profileImageView.loadImageUsingCacheWithUrlString(profileImageUrl)
+                    }
+                }
+            })
         }
     }
     
@@ -53,7 +73,7 @@ class UserCell: UITableViewCell {
     let timeLabel: UILabel = {
         
         let label = UILabel()
-        label.text = "hh:mm:ss"
+        //label.text = "hh:mm:ss"
         label.font = UIFont.systemFont(ofSize: 12)
         label.textColor = UIColor.lightGray
         label.translatesAutoresizingMaskIntoConstraints = false
