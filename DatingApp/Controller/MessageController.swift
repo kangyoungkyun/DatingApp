@@ -148,6 +148,12 @@ class MessageController: UITableViewController {
         return 72
     }
     
+    //메시지 내용을 클릭했을 때
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let message = messages[indexPath.row]
+        print(message.text,message.toId,message.fromId)
+    }
+    
     
     //로그인or로그아웃 체크 함수
     func checkIfUserIsLoggedIn(){
