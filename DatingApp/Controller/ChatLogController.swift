@@ -89,7 +89,19 @@ class ChatLogController: UICollectionViewController,UITextFieldDelegate {
         let timestamp = Int(Date().timeIntervalSince1970)
         
         let values = ["text" : inputTextField.text! , "toid" : toId, "fromid":fromId, "timestamp":timestamp] as [String: Any]
-        childRef.updateChildValues(values)
+        //childRef.updateChildValues(values)
+        
+        childRef.updateChildValues(values) { (error, ref) in
+            if error != nil{
+                print(error)
+                return
+            }
+            let userMessagesRef = Database.database().reference().child("user-messages").child(fromId!)
+            let messageId = childRef.key
+            userMessagesRef.updateChildValues([messageId:1])
+        }
+        
+        
     }
     
     //엔터키 눌렀을 때 메시지 보내기
