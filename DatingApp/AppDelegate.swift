@@ -18,11 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        //초기화면을 ViewController 지정
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
-        window?.rootViewController = UINavigationController(rootViewController: MessageController())
-        
-        
-        
-        
+        window?.rootViewController = UINavigationController(rootViewController: MainViewController())
         
         return true
     }

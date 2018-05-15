@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		017CF42B6F5C7A3499311200 /* Pods_DatingApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ABB98793ADDF8A3694DA7EE /* Pods_DatingApp.framework */; };
+		5232ED9C20AAA7BA009C414A /* SDMiSaeng.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5232ED9B20AAA7B1009C414A /* SDMiSaeng.ttf */; };
+		5232ED9E20AAB621009C414A /* main2.png in Resources */ = {isa = PBXBuildFile; fileRef = 5232ED9D20AAB621009C414A /* main2.png */; };
+		5232EDA020AAB72D009C414A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5232ED9F20AAB72D009C414A /* MainViewController.swift */; };
 		52419BC02074636200E4DB8C /* mytext.txt in Resources */ = {isa = PBXBuildFile; fileRef = 52419BBF2074636200E4DB8C /* mytext.txt */; };
 		52419BC220746C5D00E4DB8C /* new_message_icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 52419BC120746C5D00E4DB8C /* new_message_icon@3x.png */; };
 		52419BC420746CA300E4DB8C /* NewMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52419BC320746CA300E4DB8C /* NewMessageController.swift */; };
@@ -20,7 +23,7 @@
 		525ED00220736CB0007E60B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 525ED00120736CB0007E60B1 /* Assets.xcassets */; };
 		525ED00520736CB0007E60B1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 525ED00320736CB0007E60B1 /* LaunchScreen.storyboard */; };
 		525ED00D20736DAC007E60B1 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525ED00C20736DAC007E60B1 /* LoginController.swift */; };
-		525ED016207377B5007E60B1 /* main2.png in Resources */ = {isa = PBXBuildFile; fileRef = 525ED015207377B4007E60B1 /* main2.png */; };
+		52639AD520AA66CC00D703D4 /* work.txt in Resources */ = {isa = PBXBuildFile; fileRef = 52639AD420AA66CC00D703D4 /* work.txt */; };
 		528F405120786DEE007E4942 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528F405020786DEE007E4942 /* ChatMessageCell.swift */; };
 		529E780A20760EDD00B0FD5C /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529E780920760EDD00B0FD5C /* ChatLogController.swift */; };
 		529E780C2076127400B0FD5C /* MyUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529E780B2076127400B0FD5C /* MyUIView.swift */; };
@@ -32,6 +35,9 @@
 /* Begin PBXFileReference section */
 		042EC86AB23CFCE69BA5F8E5 /* Pods-DatingApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DatingApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-DatingApp/Pods-DatingApp.release.xcconfig"; sourceTree = "<group>"; };
 		3ABB98793ADDF8A3694DA7EE /* Pods_DatingApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DatingApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5232ED9B20AAA7B1009C414A /* SDMiSaeng.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SDMiSaeng.ttf; sourceTree = "<group>"; };
+		5232ED9D20AAB621009C414A /* main2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = main2.png; sourceTree = "<group>"; };
+		5232ED9F20AAB72D009C414A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		52419BBF2074636200E4DB8C /* mytext.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = mytext.txt; sourceTree = "<group>"; };
 		52419BC120746C5D00E4DB8C /* new_message_icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "new_message_icon@3x.png"; sourceTree = "<group>"; };
 		52419BC320746CA300E4DB8C /* NewMessageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMessageController.swift; sourceTree = "<group>"; };
@@ -46,7 +52,7 @@
 		525ED00420736CB0007E60B1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		525ED00620736CB0007E60B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		525ED00C20736DAC007E60B1 /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
-		525ED015207377B4007E60B1 /* main2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = main2.png; sourceTree = "<group>"; };
+		52639AD420AA66CC00D703D4 /* work.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = work.txt; sourceTree = "<group>"; };
 		528F405020786DEE007E4942 /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		529E780920760EDD00B0FD5C /* ChatLogController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatLogController.swift; sourceTree = "<group>"; };
 		529E780B2076127400B0FD5C /* MyUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyUIView.swift; sourceTree = "<group>"; };
@@ -68,6 +74,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5232EDA120AABBEB009C414A /* Another */ = {
+			isa = PBXGroup;
+			children = (
+				525ECFFC20736CB0007E60B1 /* MessageController.swift */,
+				52419BC320746CA300E4DB8C /* NewMessageController.swift */,
+				529E780920760EDD00B0FD5C /* ChatLogController.swift */,
+			);
+			path = Another;
+			sourceTree = "<group>";
+		};
 		52419BC720746DF100E4DB8C /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -106,11 +122,12 @@
 		525ECFF920736CB0007E60B1 /* DatingApp */ = {
 			isa = PBXGroup;
 			children = (
+				5232EDA120AABBEB009C414A /* Another */,
+				525ECFFA20736CB0007E60B1 /* AppDelegate.swift */,
 				529E780F2076285E00B0FD5C /* View */,
 				52419BCA2074856800E4DB8C /* Helpers */,
 				52419BC720746DF100E4DB8C /* Model */,
-				525ED01020737466007E60B1 /* pic */,
-				525ECFFA20736CB0007E60B1 /* AppDelegate.swift */,
+				525ED01020737466007E60B1 /* file */,
 				525ED00F20736E2F007E60B1 /* Controller */,
 				525ECFFE20736CB0007E60B1 /* Main.storyboard */,
 				525ED00120736CB0007E60B1 /* Assets.xcassets */,
@@ -118,6 +135,7 @@
 				525ED00620736CB0007E60B1 /* Info.plist */,
 				52AC441E2073CA8300B9D753 /* GoogleService-Info.plist */,
 				52419BBF2074636200E4DB8C /* mytext.txt */,
+				52639AD420AA66CC00D703D4 /* work.txt */,
 			);
 			path = DatingApp;
 			sourceTree = "<group>";
@@ -127,21 +145,20 @@
 			children = (
 				525ED00C20736DAC007E60B1 /* LoginController.swift */,
 				52419BC82074783D00E4DB8C /* LoginController+handlers.swift */,
-				525ECFFC20736CB0007E60B1 /* MessageController.swift */,
-				52419BC320746CA300E4DB8C /* NewMessageController.swift */,
-				529E780920760EDD00B0FD5C /* ChatLogController.swift */,
+				5232ED9F20AAB72D009C414A /* MainViewController.swift */,
 				529E780B2076127400B0FD5C /* MyUIView.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
 		};
-		525ED01020737466007E60B1 /* pic */ = {
+		525ED01020737466007E60B1 /* file */ = {
 			isa = PBXGroup;
 			children = (
+				5232ED9D20AAB621009C414A /* main2.png */,
+				5232ED9B20AAA7B1009C414A /* SDMiSaeng.ttf */,
 				52419BC120746C5D00E4DB8C /* new_message_icon@3x.png */,
-				525ED015207377B4007E60B1 /* main2.png */,
 			);
-			path = pic;
+			path = file;
 			sourceTree = "<group>";
 		};
 		529E780F2076285E00B0FD5C /* View */ = {
@@ -232,9 +249,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5232ED9E20AAB621009C414A /* main2.png in Resources */,
 				52419BC220746C5D00E4DB8C /* new_message_icon@3x.png in Resources */,
+				52639AD520AA66CC00D703D4 /* work.txt in Resources */,
 				525ED00520736CB0007E60B1 /* LaunchScreen.storyboard in Resources */,
-				525ED016207377B5007E60B1 /* main2.png in Resources */,
+				5232ED9C20AAA7BA009C414A /* SDMiSaeng.ttf in Resources */,
 				52AC441F2073CA8400B9D753 /* GoogleService-Info.plist in Resources */,
 				52419BC02074636200E4DB8C /* mytext.txt in Resources */,
 				525ED00220736CB0007E60B1 /* Assets.xcassets in Resources */,
@@ -310,6 +329,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				529E780A20760EDD00B0FD5C /* ChatLogController.swift in Sources */,
+				5232EDA020AAB72D009C414A /* MainViewController.swift in Sources */,
 				52419BC420746CA300E4DB8C /* NewMessageController.swift in Sources */,
 				52419BC92074783D00E4DB8C /* LoginController+handlers.swift in Sources */,
 				525ECFFD20736CB0007E60B1 /* MessageController.swift in Sources */,
