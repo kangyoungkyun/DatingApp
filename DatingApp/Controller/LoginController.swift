@@ -13,7 +13,7 @@ class LoginController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSou
     let gender = ["남자","여자"]
     var age:[String] = []
     
-    var messagesController: MessageController?
+    var mainViewController: MainViewController?
     
     //피커뷰 객체
     let genderPickerView :UIPickerView = {
@@ -111,7 +111,7 @@ class LoginController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSou
                 return
             }
             //로그인 할때 네비게이션 바 데이터 변경 함수 호출
-            self.messagesController?.fetchUserAndSetupNavBarTitle()
+            self.mainViewController?.fetchUserAndSetupNavBarTitle()
             //로그인 성공시 로그인창 내려주기
             self.dismiss(animated: true, completion: nil)
         }

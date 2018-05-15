@@ -103,7 +103,7 @@ extension LoginController: UIImagePickerControllerDelegate, UINavigationControll
             
             let user = User(dic:values)
             //등록 할때 메시지 컨트롤러에 있는 setupnavbar 함수 호출
-            self.messagesController?.setupNavBarWithUser(user: user)
+            self.mainViewController?.setupNavBarWithUser(user: user)
             self.dismiss(animated: true, completion: nil)
         })
         

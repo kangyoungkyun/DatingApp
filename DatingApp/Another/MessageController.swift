@@ -295,7 +295,7 @@ class MessageController: UITableViewController {
         messagesController?.fetchUserAndSetupNavBarTitle()
         
         let loginController = LoginController()
-        loginController.messagesController = self
+        //loginController.messagesController = self
         present(loginController, animated: true, completion: nil)
     }
     

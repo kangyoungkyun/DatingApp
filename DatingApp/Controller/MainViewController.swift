@@ -17,13 +17,9 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "로그아웃", style: .plain, target:self , action: #selector(handleLogout))
-        
-        
         //로그인or로그아웃 체크
         checkIfUserIsLoggedIn()
-        
 
-        
     }
 
     //로그인or로그아웃 체크 함수
@@ -32,8 +28,8 @@ class MainViewController: UIViewController {
         if Auth.auth().currentUser?.uid == nil{
             perform(#selector(handleLogout), with: nil, afterDelay: 0)
         }else{
-            
             //로그인 되었으면 네비게이션 타이틀의 제목을 유저 이름으로 지정해준다.
+            print("checkIfUserIsLoggedIn - fetchUserAndSetupNavBarTitle")
             fetchUserAndSetupNavBarTitle()
             
         }
@@ -42,7 +38,7 @@ class MainViewController: UIViewController {
     func fetchUserAndSetupNavBarTitle(){
         //로그인 되었으면 네비게이션 타이틀의 제목을 유저 이름으로 지정해준다.
         guard let uid = Auth.auth().currentUser?.uid else{
-            //uid가
+            print("fetchUserAndSetupNavBarTitle - uid 없음")
             return
         }
         ref = Database.database().reference()
@@ -61,8 +57,8 @@ class MainViewController: UIViewController {
     
     //네비게이션 타이틀 바 변경해주기
     func setupNavBarWithUser(user: User){
-
-        print("사진있는 타이틀! 호출")
+        
+        print("setupNavBarWithUser - 사진있는 타이틀! 호출")
         let titleView = MyUIView()
         
         titleView.frame = CGRect(x:0, y:0, width: 100, height: 50)
@@ -119,7 +115,7 @@ class MainViewController: UIViewController {
         mainViewController?.fetchUserAndSetupNavBarTitle()
         
         let loginController = LoginController()
-        
+        loginController.mainViewController = self
         present(loginController, animated: true, completion: nil)
     }
 }
