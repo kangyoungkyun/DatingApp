@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 class MainViewController: UIViewController {
-
+    
     var ref: DatabaseReference!
     var mainViewController: MainViewController?
     //진입점
@@ -17,11 +17,15 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "로그아웃", style: .plain, target:self , action: #selector(handleLogout))
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "showme", style: .plain, target: self, action: #selector(handleMyLocation))
+        
+        
         //로그인or로그아웃 체크
         checkIfUserIsLoggedIn()
-
+        
     }
-
+    
     //로그인or로그아웃 체크 함수
     func checkIfUserIsLoggedIn(){
         //로그아웃 되었을 때 실행
@@ -117,6 +121,14 @@ class MainViewController: UIViewController {
         let loginController = LoginController()
         loginController.mainViewController = self
         present(loginController, animated: true, completion: nil)
+    }
+    
+    //지도 보여주기 액션
+    @objc func handleMyLocation(){
+         let mapController = MapViewController()
+        let navController = UINavigationController(rootViewController: mapController)
+        present(navController, animated: true, completion: nil)
+
     }
 }
 
