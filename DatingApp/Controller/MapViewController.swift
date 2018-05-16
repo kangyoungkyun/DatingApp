@@ -57,19 +57,70 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         let horizontalAccuracy = location.horizontalAccuracy //수직정확도
         let altitude = location.altitude // 고도
 
-        //거리구하기
-        let newLocation = CLLocation(latitude: 37.5662952, longitude: 126.97794509999994)//상대방 위치
-        let distance = location.distance(from: newLocation)     // 2464.20431497264m  ->   2.464km
+        //거리구하기 37.5578239,126.95218069999999
+        let anotherUserLocation = CLLocation(latitude: 37.5578239, longitude: 126.95218069999999) //상대방 위치   -> CLLocation을 지오 로케이션을 이용해서 주소로 바꿀 수 있음!
+        let distance = location.distance(from: anotherUserLocation)     // 2464.20431497264m  ->   2.464km
     
+        
          print("위도: \(currentLatitude) 경도: \(currentLongtitude) 수평: \(verticalAccuracy) 수직: \(horizontalAccuracy) 고도: \(altitude) 거리: \(distance/1000)km" )
+    
+        
+        var address2 : String?
+        
+        //역방향 지오코딩
+        
+        let geoCoder = CLGeocoder()
+        //cllocatoin객체는 위도와 경로 좌표로 초기화
+        //let newLocation = CLLocation(latitude: 37.3316833, longitude: -122.0301031)
+        
+        //geoCoder에 reverseGeocodeLocation 메서드로 전달 된다.
+        geoCoder.reverseGeocodeLocation(anotherUserLocation, completionHandler: { (placemarks, error) in
+            if error != nil {
+                print("에러 발생 \(error!.localizedDescription)")
+            }
+            //값이 있으면 배열 값으로 반환
+            if placemarks!.count > 0 {
+                let placemark = placemarks![0]
+                //딕셔너리 값으로 반환
+                let addressDictionary = placemark.addressDictionary
+                
+                //key 값을 이용해서 주소 찾기
+                var address = addressDictionary!["Street"]
+                let city = addressDictionary!["City"]
+                let state = addressDictionary!["State"]
+                let zip = addressDictionary!["ZIP"]
+                
+                address2 = "\(address!) \(city!) \(state!)"
+                
+                let alert = UIAlertController(title: "알림1 ", message:"교회가 있는곳은 \(address2)", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "ㅇㅇ", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                
+                
+                print("\(address!) \(city!) \(state!)")
+            }
+        })
+        
+        
+        //나의 위치에서 2km 이내있는 사람 불러오기!
+        if(distance/1000 < 2){
+            print("지금 교회랑 가까워요")
+            let alert = UIAlertController(title: "알림 ", message:"지금 당신은 교회랑 가까워요\(distance/1000)km 정도?", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "ㅇㅇ", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            
+            
+        }
+        
+        
         
         
         //거리 구하기2
         //신촌역 37.559768,126.94230800000003 , 광화문 37.57593689999999,126.97681569999997
-        let coordinate0 = CLLocation(latitude: 37.559768, longitude: 126.94230800000003)
-        let coordinate1 = CLLocation(latitude: 37.57593689999999, longitude: 126.97681569999997)
-        let distanceInMeters = coordinate0.distance(from: coordinate1)
-        print("distance : \(distanceInMeters)")
+        //let coordinate0 = CLLocation(latitude: 37.559768, longitude: 126.94230800000003)
+        //let coordinate1 = CLLocation(latitude: 37.57593689999999, longitude: 126.97681569999997)
+        //let distanceInMeters = coordinate0.distance(from: coordinate1)
+        //print("distance : \(distanceInMeters/1000)km")
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
