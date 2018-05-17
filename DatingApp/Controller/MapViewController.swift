@@ -35,10 +35,12 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
     //CLLocatoinManager 클래스의 인스턴스는 아래처럼 생성가능하다.
     let locationManager = CLLocationManager()   //지도 매니저 객체
     
+    //뒤로가기
     @objc func handleBack(){
         dismiss(animated: true, completion: nil)
     }
     
+    //진입점 - 초기화
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -48,13 +50,13 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         
         setMyMapLayout()
         
-        locationManager.delegate = self //locationManager의 델리게이트를 self로 설정
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest //정확도를 최고로 설정
-        locationManager.requestWhenInUseAuthorization() //위치데이터를 추적하기 위해서 사용자에게 승인 요구
-        locationManager.requestAlwaysAuthorization() //백그라운드에서도 사용하겠다 사용 요구
-        locationManager.distanceFilter = 1000 // 1000미터 이상의 위치 변화가 생겼을 때 알림을 받는다.
-        locationManager.startUpdatingLocation()     // 위치 업데이트 시작
-        myMap.showsUserLocation = true              // 위치 보기 값을 true로 설정
+        locationManager.delegate = self                            //locationManager의 델리게이트를 self로 설정
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest    //정확도를 최고로 설정
+        locationManager.requestWhenInUseAuthorization()             //위치데이터를 추적하기 위해서 사용자에게 승인 요구
+        locationManager.requestAlwaysAuthorization()                //백그라운드에서도 사용하겠다 사용 요구
+        locationManager.distanceFilter = 1000                      //1000미터 이상의 위치 변화가 생겼을 때 알림을 받는다.
+        locationManager.startUpdatingLocation()                    // 위치 업데이트 시작
+        myMap.showsUserLocation = true                            // 위치 보기 값을 true로 설정
         
         
         //2.위치 데이터 저장할 db 위치지정 , 변수 초기화
@@ -79,9 +81,11 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         let horizontalAccuracy = location.horizontalAccuracy //수직정확도
         let altitude = location.altitude // 고도
         
+        
         //거리구하기 37.5578239,126.95218069999999.//서울 시청 37.5662952,126.97794509999994 //신촌역37.559768,126.94230800000003  진주 : 35.1617059,128.11498189999998
         let anotherUserLocation = CLLocation(latitude: 37.5578239, longitude: 126.95218069999999) //상대방 위치   -> CLLocation을 지오 로케이션을 이용해서 주소로 바꿀 수 있음!
         let distance = location.distance(from: anotherUserLocation)     // 2464.20431497264m  ->   2.464km
+        
         
         //3. 나의 현재 위치 데이터 삽입 - forKey 값을 uid로 변경
         //내가 로그인한 아이디
@@ -89,61 +93,13 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
             return
         }
         
-        //4.위치데이터 저장 및 업데이트
+        //4.나의 위치데이터 저장 및 업데이트
         geoFire?.setLocation(location, forKey: uid)
         
         print("위도: \(currentLatitude) 경도: \(currentLongtitude) 수평: \(verticalAccuracy) 수직: \(horizontalAccuracy) 고도: \(altitude) 거리: \(distance/1000)km" )
         
         
-        
-        
-        
-        
-        
-        //나와 3km 이내 있는 사람 전부 삭제
-        // nearbyUserSet.removeAll()
-        
-        
-        /*
-         var address2 : String?
-         
-         //역방향 지오코딩
-         
-         let geoCoder = CLGeocoder()
-         //cllocatoin객체는 위도와 경로 좌표로 초기화
-         //let newLocation = CLLocation(latitude: 37.3316833, longitude: -122.0301031)
-         
-         //geoCoder에 reverseGeocodeLocation 메서드로 전달 된다.
-         geoCoder.reverseGeocodeLocation(anotherUserLocation, completionHandler: { (placemarks, error) in
-         if error != nil {
-         print("에러 발생 \(error!.localizedDescription)")
-         }
-         //값이 있으면 배열 값으로 반환
-         if placemarks!.count > 0 {
-         let placemark = placemarks![0]
-         //딕셔너리 값으로 반환
-         let addressDictionary = placemark.addressDictionary
-         
-         //key 값을 이용해서 주소 찾기
-         let address = addressDictionary!["Street"]
-         let city = addressDictionary!["City"]
-         let state = addressDictionary!["State"]
-         let zip = addressDictionary!["ZIP"]
-         
-         address2 = "\(address!) \(city!) \(state!)"
-         
-         let alert = UIAlertController(title: "알림1 ", message:"교회가 있는곳은 \(address2)", preferredStyle: UIAlertControllerStyle.alert)
-         alert.addAction(UIAlertAction(title: "ㅇㅇ", style: UIAlertActionStyle.default, handler: nil))
-         self.present(alert, animated: true, completion: nil)
-         
-         
-         print("\(address!) \(city!) \(state!)")
-         }
-         })*/
-        
-
-        
-        //비동기 방식으로 나와 3km 이내 있는 사람을 각각 3번씩 호출한다.
+        //비동기 방식으로 나와 3km 이내 있는 사람을 호출한다.
         let myQuery = geoFire?.query(at: location, withRadius: 3)
         myQuery?.observe(.keyEntered, with: { (key:String!, location:CLLocation!) in
             print("3km 이내 유저 key:" , key, "with location :" , location)
@@ -154,35 +110,17 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         
         //geoFire 데이터 불러오기가 모두 종료되었을때 실행되는 함수
         myQuery?.observeReady {
-            let alert = UIAlertController(title: "알림 ", message:"당신 주변에 \(self.nearbyUserSet.count)사람 정도 있네요", preferredStyle: UIAlertControllerStyle.alert)
-            alert.addAction(UIAlertAction(title: "ok", style: UIAlertActionStyle.default, handler: nil))
+            let alert = UIAlertController(title: "알림 ", message:"당신 3km 주변에 \(self.nearbyUserSet.count)사람 정도 있네요", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "ok", style:  UIAlertActionStyle.default, handler: { (action) in
+                //나와 3km 이내 있는 사람 전부 삭제
+                self.nearbyUserSet.removeAll()
+            }))
+            
             self.present(alert, animated: true, completion: nil)
         }
-        
-        
-        
-        //나의 위치에서 2km 이내있는 사람 불러오기!
-//        if(distance/1000 < 3){
-//            print("지금 교회랑 가까워요")
-//            let alert = UIAlertController(title: "알림 ", message:"지금 당신은 교회랑 가까워요\(distance/1000)km 정도?", preferredStyle: UIAlertControllerStyle.alert)
-//            alert.addAction(UIAlertAction(title: "ㅇㅇ", style: UIAlertActionStyle.default, handler: nil))
-//            self.present(alert, animated: true, completion: nil)
-//
-//            
-//        }
-        
-        //거리 구하기2
-        //신촌역 37.559768,126.94230800000003 , 광화문 37.57593689999999,126.97681569999997
-        //let coordinate0 = CLLocation(latitude: 37.559768, longitude: 126.94230800000003)
-        //let coordinate1 = CLLocation(latitude: 37.57593689999999, longitude: 126.97681569999997)
-        //let distanceInMeters = coordinate0.distance(from: coordinate1)
-        //print("distance : \(distanceInMeters/1000)km")
-        
-
     }
     
 
-    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("위치기반 기능 에러발생 : \(error.localizedDescription)")
     }
@@ -200,6 +138,5 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         myMap.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         myMap.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     }
-    
-    
+
 }
