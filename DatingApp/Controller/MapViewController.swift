@@ -10,9 +10,16 @@ import UIKit
 import MapKit
 import CoreLocation
 import Contacts
+import GeoFire
+import Firebase
 
 class MapViewController: UIViewController,CLLocationManagerDelegate {
 
+    //GeoFire 위치관련 데이터 베이스 변수 선언
+    var geoFire:GeoFire?
+    var geoFireRef:DatabaseReference?
+    var firDataBaseRef:DatabaseReference!
+    
     //지도 객체
     var myMap: MKMapView = {
         let map = MKMapView()
@@ -45,6 +52,11 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         locationManager.startUpdatingLocation()     // 위치 업데이트 시작
         myMap.showsUserLocation = true              // 위치 보기 값을 true로 설정
         
+        
+        //위치 데이터 저장할 db 변수 초기화
+        firDataBaseRef = Database.database().reference().child("location")
+        geoFireRef = Database.database().reference().child("location")
+        geoFire = GeoFire(firebaseRef: geoFireRef!)
     }
 
     //위치가 변경될 때마다  이 메서드가 호출되며 가장 최근 위치 데이터를 배열의 마지막 객체에 포함하는 CLLocatoin 객체들의 배열이 인자로 전달된다.

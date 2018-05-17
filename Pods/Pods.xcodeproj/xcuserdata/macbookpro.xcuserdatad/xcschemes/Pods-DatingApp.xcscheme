@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CEFB689551C2FA4E62B90AA0B13B890E"
+               BlueprintIdentifier = "44A095BBF4512EAAF7572E117BD29A04"
                BuildableName = "Pods_DatingApp.framework"
                BlueprintName = "Pods-DatingApp"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -47,7 +47,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CEFB689551C2FA4E62B90AA0B13B890E"
+            BlueprintIdentifier = "44A095BBF4512EAAF7572E117BD29A04"
             BuildableName = "Pods_DatingApp.framework"
             BlueprintName = "Pods-DatingApp"
             ReferencedContainer = "container:Pods.xcodeproj">
