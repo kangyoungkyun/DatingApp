@@ -13,9 +13,10 @@ import Contacts
 import GeoFire
 import Firebase
 
+
 class MapViewController: UIViewController,CLLocationManagerDelegate {
 
-    //GeoFire 위치관련 데이터 베이스 변수 선언
+    //1.GeoFire 위치관련 데이터 베이스 변수 선언
     var geoFire:GeoFire?
     var geoFireRef:DatabaseReference?
     var firDataBaseRef:DatabaseReference!
@@ -53,7 +54,7 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         myMap.showsUserLocation = true              // 위치 보기 값을 true로 설정
         
         
-        //위치 데이터 저장할 db 변수 초기화
+        //2.위치 데이터 저장할 db 변수 초기화
         firDataBaseRef = Database.database().reference().child("location")
         geoFireRef = Database.database().reference().child("location")
         geoFire = GeoFire(firebaseRef: geoFireRef!)
@@ -69,13 +70,21 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         let horizontalAccuracy = location.horizontalAccuracy //수직정확도
         let altitude = location.altitude // 고도
 
-        //거리구하기 37.5578239,126.95218069999999
-        let anotherUserLocation = CLLocation(latitude: 37.5578239, longitude: 126.95218069999999) //상대방 위치   -> CLLocation을 지오 로케이션을 이용해서 주소로 바꿀 수 있음!
+        //거리구하기 37.5578239,126.95218069999999.//서울 시청 37.5662952,126.97794509999994 //신촌역37.559768,126.94230800000003  진주 : 35.1617059,128.11498189999998
+        let anotherUserLocation = CLLocation(latitude: 35.1617059, longitude: 128.11498189999998) //상대방 위치   -> CLLocation을 지오 로케이션을 이용해서 주소로 바꿀 수 있음!
         let distance = location.distance(from: anotherUserLocation)     // 2464.20431497264m  ->   2.464km
     
+        //3. 나의 현재 위치 데이터 삽입 - forKey 값을 uid로 변경 
+        geoFire?.setLocation(location, forKey: "User_Location")
         
          print("위도: \(currentLatitude) 경도: \(currentLongtitude) 수평: \(verticalAccuracy) 수직: \(horizontalAccuracy) 고도: \(altitude) 거리: \(distance/1000)km" )
     
+        let myQuery = geoFire?.query(at: location, withRadius: 3000)
+        myQuery?.observe(.keyEntered, with: { (key:String!, location:CLLocation!) in
+            print("found key:" , key, "with location :" , location)
+        })
+        
+        
         
         var address2 : String?
         
