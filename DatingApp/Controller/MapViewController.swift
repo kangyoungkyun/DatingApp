@@ -14,22 +14,18 @@ import GeoFire
 import Firebase
 
 
-class MapViewController: UIViewController,CLLocationManagerDelegate {
+class MapViewController: UIViewController,CLLocationManagerDelegate,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
+    
+    //가까이 있는 user key값 담기
+    var nearbyUserSet = Set<String>()
+    var nearbyUserProfileUrl = Array<String>()
     
     var didFindLocation : Bool?
-    
     
     //1.GeoFire 위치관련 데이터 베이스 변수 선언
     var geoFire:GeoFire?
     var geoFireRef:DatabaseReference?
     var firDataBaseRef:DatabaseReference!
-    
-    //지도 객체
-    var myMap: MKMapView = {
-        let map = MKMapView()
-        map.translatesAutoresizingMaskIntoConstraints = false
-        return map
-    }()
     
     //코어 로케이션 프레임워크의 주요 클래스는 CLLocatoinManager 와 CLLocatoin 이다
     //CLLocatoinManager 클래스의 인스턴스는 아래처럼 생성가능하다.
@@ -40,15 +36,104 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         dismiss(animated: true, completion: nil)
     }
     
+    //호감, 비호감 버튼 객체, 컬렉션뷰 객체
+    lazy var btnGood:UIButton = {
+        let btn = UIButton()
+        btn.setTitle("호감", for: .normal)
+        btn.setTitleColor(UIColor.black, for: .normal)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.backgroundColor = .yellow
+        btn.addTarget(self, action: #selector(btnGoodHandler), for: .touchUpInside)
+        return btn
+    }()
+    
+    @objc func btnGoodHandler(){
+        print("호감 눌렀다!")
+    }
+    
+    lazy var btnNotGood:UIButton = {
+        let btn = UIButton()
+        btn.setTitle("글쎄 좀..", for: .normal)
+        btn.setTitleColor(UIColor.black, for: .normal)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.backgroundColor = .red
+        btn.addTarget(self, action: #selector(btnNotGoodHandler), for: .touchUpInside)
+        return btn
+    }()
+    
+    @objc func btnNotGoodHandler(){
+        print("싫어요ㅜㅜㅜㅡㅜㅡㅜㅡㅜㅡㅜ")
+    }
+    
+
+    let myCollectionView : UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        let myCollectoinView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        myCollectoinView.showsHorizontalScrollIndicator = false
+        myCollectoinView.translatesAutoresizingMaskIntoConstraints = false
+        myCollectoinView.backgroundColor = UIColor.darkGray
+        myCollectoinView.allowsMultipleSelection = false
+        
+        return myCollectoinView
+    }()
+    
+    //컬랙션 뷰 셀 개수
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return nearbyUserSet.count
+    }
+    
+    //컬랙션 뷰 셀 구성 - 이미지 넣기
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        //self.nearbyUserProfileUrl.removeAll()
+        let cell=collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as? PictureCell
+        cell?.backgroundColor = .green
+        
+//        if let profileImageUrl = user.profileImageUrl{
+//            profileImageView.loadImageUsingCacheWithUrlString(profileImageUrl)
+//        }
+        
+        print("nearbyUserProfileUrl.count \(nearbyUserProfileUrl.count)")
+        
+        if nearbyUserProfileUrl.count > 0{
+            cell?.imageView.loadImageUsingCacheWithUrlString(nearbyUserProfileUrl[indexPath.row])
+            
+        }else if nearbyUserProfileUrl.count == 0{
+             cell?.imageView.image = UIImage(named: "kkk.jpg")
+            
+        }
+        
+//        if let nearByImage: String = nearbyUserProfileUrl[indexPath.row] {
+//            cell?.imageView.loadImageUsingCacheWithUrlString(nearByImage)
+//        }else{
+//             cell?.imageView.image = UIImage(named: "kkk")
+//        }
+        
+       
+        return cell!
+    }
+    
+    //컬렉션뷰 셀 사이즈 조정
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = myCollectionView.frame.width
+        let height: CGFloat = myCollectionView.frame.height
+        return CGSize(width: width, height: height)
+    }
+    
+
+    
     //진입점 - 초기화
     override func viewDidLoad() {
         super.viewDidLoad()
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "뒤로", style: .plain, target:self , action: #selector(handleBack))
+
         
-        view.addSubview(myMap)
-        
-        setMyMapLayout()
+        //컬렉션 뷰 셀 등록
+        myCollectionView.register(PictureCell.self, forCellWithReuseIdentifier: "Cell")
+        myCollectionView.delegate = self
+        myCollectionView.dataSource = self
         
         locationManager.delegate = self                            //locationManager의 델리게이트를 self로 설정
         locationManager.desiredAccuracy = kCLLocationAccuracyBest    //정확도를 최고로 설정
@@ -56,16 +141,21 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         locationManager.requestAlwaysAuthorization()                //백그라운드에서도 사용하겠다 사용 요구
         locationManager.distanceFilter = 1000                      //1000미터 이상의 위치 변화가 생겼을 때 알림을 받는다.
         locationManager.startUpdatingLocation()                    // 위치 업데이트 시작
-        myMap.showsUserLocation = true                            // 위치 보기 값을 true로 설정
         
         
         //2.위치 데이터 저장할 db 위치지정 , 변수 초기화
         firDataBaseRef = Database.database().reference().child("location")
         geoFireRef = Database.database().reference().child("location")
         geoFire = GeoFire(firebaseRef: geoFireRef!)
+        
+        view.addSubview(btnGood)
+        view.addSubview(btnNotGood)
+        view.addSubview(myCollectionView)
+        
+        setupCollectionViewAndBtn()
+        
     }
-    var nearbyUserSet = Set<String>()
-    
+
     //위치가 변경될 때마다  이 메서드가 호출되며 가장 최근 위치 데이터를 배열의 마지막 객체에 포함하는 CLLocatoin 객체들의 배열이 인자로 전달된다.
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
@@ -86,7 +176,6 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         let anotherUserLocation = CLLocation(latitude: 37.5578239, longitude: 126.95218069999999) //상대방 위치   -> CLLocation을 지오 로케이션을 이용해서 주소로 바꿀 수 있음!
         let distance = location.distance(from: anotherUserLocation)     // 2464.20431497264m  ->   2.464km
         
-        
         //3. 나의 현재 위치 데이터 삽입 - forKey 값을 uid로 변경
         //내가 로그인한 아이디
         guard let uid = Auth.auth().currentUser?.uid else {
@@ -105,11 +194,43 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
             print("3km 이내 유저 key:" , key, "with location :" , location)
             self.nearbyUserSet.insert(key)
             print("나와 3km이내 있는 사람 몇명? \(self.nearbyUserSet.count)")
+
         })
         
         
         //geoFire 데이터 불러오기가 모두 종료되었을때 실행되는 함수
         myQuery?.observeReady {
+            
+            //나 근처에 있는 사람 uid 가져 오기
+            for uid in self.nearbyUserSet{
+
+                //1. index 가지고 firebase 의 users의 uid에 해당하는 profile  url 가지고 와서 imageview에 뿌려주기
+               let ref = Database.database().reference()
+                
+                ref.child("users").child(uid).child("profileImageUrl").observeSingleEvent(of: .value, with: { (snapshot) in
+                    print("nearbyUserProfileUrl.append 넣고 있음")
+                    self.nearbyUserProfileUrl.append(snapshot.value as! String)
+                    self.myCollectionView.reloadData()
+                }, withCancel: nil)
+                
+                
+                
+                //3. 좋아요 버튼 or 싫어요 버튼 누르면 다시 for 문 돌아감
+                
+                //4. for 문이 끝나면 없습니다...표시..
+//                DispatchQueue.main.async {
+//                    print("nearbyUserProfileUrl.append DispatchQueue")
+//                    self.myCollectionView.reloadData()
+//                }
+            }
+            
+            
+            //# 중요!!!!!!
+            //* 유저 uid를 가지고 users에 있는 uid 의 profile url을 가져와서 imageView에 하나씩 뿌려주기
+            // 좋아요 or 싫어요 버튼 누르면 배열에 다음 요소의 데이터를 image view에 넣어서 뿌려주기...
+            
+            
+            
             let alert = UIAlertController(title: "알림 ", message:"당신 3km 주변에 \(self.nearbyUserSet.count)사람 정도 있네요", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "ok", style:  UIAlertActionStyle.default, handler: { (action) in
                 //나와 3km 이내 있는 사람 전부 삭제
@@ -120,7 +241,7 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         }
     }
     
-
+    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("위치기반 기능 에러발생 : \(error.localizedDescription)")
     }
@@ -132,11 +253,22 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         print("didChangeAuthorization: \(status.rawValue)")
     }
     
-    func setMyMapLayout(){
-        myMap.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        myMap.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        myMap.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        myMap.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+    //컬랙션뷰 레이아웃 및 버튼 제약조건
+    func setupCollectionViewAndBtn(){
+        myCollectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive=true
+        myCollectionView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive=true
+        myCollectionView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive=true
+        myCollectionView.bottomAnchor.constraint(equalTo: btnGood.topAnchor, constant: 0).isActive=true
+        
+        btnGood.leftAnchor.constraint(equalTo: view.leftAnchor).isActive=true
+        btnGood.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5).isActive = true
+        btnGood.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        btnGood.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: 0).isActive=true
+        
+        btnNotGood.rightAnchor.constraint(equalTo: view.rightAnchor).isActive=true
+        btnNotGood.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5).isActive = true
+        btnNotGood.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        btnNotGood.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: 0).isActive=true
     }
-
+    
 }
