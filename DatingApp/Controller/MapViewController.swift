@@ -76,8 +76,15 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
         myCollectoinView.backgroundColor = UIColor.darkGray
         myCollectoinView.allowsMultipleSelection = false
         
+
+        
         return myCollectoinView
     }()
+    //
+    
+   @objc func handleSwipeLeft(from recognizer: UIGestureRecognizer?) {
+        print("왼쪽으로 스와이프")
+    }
     
     //컬랙션 뷰 셀 개수
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -90,27 +97,17 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
         let cell=collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as? PictureCell
         cell?.backgroundColor = .green
         
-//        if let profileImageUrl = user.profileImageUrl{
-//            profileImageView.loadImageUsingCacheWithUrlString(profileImageUrl)
-//        }
-        
         print("nearbyUserProfileUrl.count \(nearbyUserProfileUrl.count)")
         
         if nearbyUserProfileUrl.count > 0{
             cell?.imageView.loadImageUsingCacheWithUrlString(nearbyUserProfileUrl[indexPath.row])
-            
+            let swipeUpGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeLeft))
+            swipeUpGestureRecognizer.direction = .left
+            cell?.addGestureRecognizer(swipeUpGestureRecognizer)
         }else if nearbyUserProfileUrl.count == 0{
              cell?.imageView.image = UIImage(named: "kkk.jpg")
-            
         }
-        
-//        if let nearByImage: String = nearbyUserProfileUrl[indexPath.row] {
-//            cell?.imageView.loadImageUsingCacheWithUrlString(nearByImage)
-//        }else{
-//             cell?.imageView.image = UIImage(named: "kkk")
-//        }
-        
-       
+
         return cell!
     }
     
@@ -120,9 +117,7 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
         let height: CGFloat = myCollectionView.frame.height
         return CGSize(width: width, height: height)
     }
-    
 
-    
     //진입점 - 초기화
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -213,23 +208,13 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
                     self.myCollectionView.reloadData()
                 }, withCancel: nil)
                 
-                
-                
                 //3. 좋아요 버튼 or 싫어요 버튼 누르면 다시 for 문 돌아감
-                
                 //4. for 문이 끝나면 없습니다...표시..
-//                DispatchQueue.main.async {
-//                    print("nearbyUserProfileUrl.append DispatchQueue")
-//                    self.myCollectionView.reloadData()
-//                }
             }
-            
             
             //# 중요!!!!!!
             //* 유저 uid를 가지고 users에 있는 uid 의 profile url을 가져와서 imageView에 하나씩 뿌려주기
             // 좋아요 or 싫어요 버튼 누르면 배열에 다음 요소의 데이터를 image view에 넣어서 뿌려주기...
-            
-            
             
             let alert = UIAlertController(title: "알림 ", message:"당신 3km 주변에 \(self.nearbyUserSet.count)사람 정도 있네요", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "ok", style:  UIAlertActionStyle.default, handler: { (action) in
@@ -240,7 +225,6 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
             self.present(alert, animated: true, completion: nil)
         }
     }
-    
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("위치기반 기능 에러발생 : \(error.localizedDescription)")
