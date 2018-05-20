@@ -36,6 +36,31 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
         dismiss(animated: true, completion: nil)
     }
     
+    //uiview
+    lazy var picUiview : UIView = {
+      let uiview = UIView()
+      uiview.translatesAutoresizingMaskIntoConstraints = false
+      uiview.backgroundColor = .yellow
+        var panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
+      uiview.addGestureRecognizer(panGesture)
+      return uiview
+    }()
+    
+    //pen gesture 이벤트 처리
+    @objc func handlePanGesture(panGesture: UIPanGestureRecognizer) {
+        let card = panGesture.view!
+        let point = panGesture.translation(in: view)
+        card.center = CGPoint(x: view.center.x + point.x, y: view.center.y + point.y)
+        
+        if panGesture.state == UIGestureRecognizerState.ended {
+            UIView.animate(withDuration: 0.2, animations: {
+                card.center = self.view.center
+            })
+            
+        }
+    }
+    
+    
     //호감, 비호감 버튼 객체, 컬렉션뷰 객체
     lazy var btnGood:UIButton = {
         let btn = UIButton()
@@ -146,7 +171,7 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
         view.addSubview(btnGood)
         view.addSubview(btnNotGood)
         view.addSubview(myCollectionView)
-        
+        view.addSubview(picUiview)
         setupCollectionViewAndBtn()
         
     }
@@ -253,6 +278,12 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
         btnNotGood.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5).isActive = true
         btnNotGood.heightAnchor.constraint(equalToConstant: 35).isActive = true
         btnNotGood.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: 0).isActive=true
+        
+        picUiview.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        picUiview.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        picUiview.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        picUiview.heightAnchor.constraint(equalToConstant: 200).isActive = true
+        
     }
     
 }
