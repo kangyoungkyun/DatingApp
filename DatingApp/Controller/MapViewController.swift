@@ -56,24 +56,42 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
         //오른쪽으로 제스쳐 +, 왼쪽으로 제스쳐 - 가 됨
         let xFromCenter = card.center.x - view.center.x
         
-        
         //uiview의 중심위치 구해주기
         card.center = CGPoint(x: view.center.x + point.x, y: view.center.y + point.y)
         
         print("card.center.x: \(card.center.x) , view.center.x: \(view.center.x), xFromCenter:\(xFromCenter)")
         
+        //왼쪽으로 스와이프 했을 때
         if (xFromCenter < 0) {
-            
             imageView.image = UIImage(named: "bad.png")
         }else if(xFromCenter > 0){
-            
             imageView.image = UIImage(named: "good.png")
         }
-        
+        // 알파값은 점점 진해지게 0 -> 1
         imageView.alpha = abs(xFromCenter) / view.center.x
         
         //panGesture가 끝이 났을때
         if panGesture.state == UIGestureRecognizerState.ended {
+            
+            if (card.center.x < 75) {
+                //왼쪽으로 스와이프 했을 때
+                UIView.animate(withDuration: 0.3, animations: {
+                    card.center = CGPoint(x: card.center.x - 200, y: card.center.y + 75)
+                    card.alpha = 0
+                })
+                return
+                
+            }else if (card.center.x > (view.frame.width - 75)){
+                //오른쪽으로 스와이프 했을 때
+                UIView.animate(withDuration: 0.3, animations: {
+                    card.center = CGPoint(x: card.center.x + 200, y: card.center.y + 75)
+                    card.alpha = 0
+                })
+                return
+            }
+            
+            
+            
             UIView.animate(withDuration: 1, animations: {
                 print("팬제스쳐 끝")
                 card.center = self.view.center
