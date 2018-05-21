@@ -16,7 +16,7 @@ import Firebase
 class MapViewController: UIViewController,CLLocationManagerDelegate {
     
     //가까이 있는 user key값 담기
-    var nearbyUserSet = Set<String>()
+    var nearbyUserSet = Array<String>()
     var nearbyUserProfileUrl = Array<String>()
     
     var didFindLocation : Bool?
@@ -58,7 +58,7 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         if (xFromCenter < 0) {
             self.likeOrHateImageViewArray[self.userViewCount!].image = UIImage(named: "bad.png")
         }else if(xFromCenter > 0){
-             self.likeOrHateImageViewArray[self.userViewCount!].image = UIImage(named: "good.png")
+            self.likeOrHateImageViewArray[self.userViewCount!].image = UIImage(named: "good.png")
         }
         // 알파값은 점점 진해지게 0 -> 1
         self.likeOrHateImageViewArray[self.userViewCount!].alpha = abs(xFromCenter) / view.center.x
@@ -71,6 +71,7 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                 UIView.animate(withDuration: 0.3, animations: {
                     card.center = CGPoint(x: card.center.x - 200, y: card.center.y + 75)
                     card.alpha = 0
+                    print("제스쳐 끝나고 싫어요 표시 uid : \(self.nearbyUserSet[self.userViewCount!])")
                     self.userViewCount = self.userViewCount! - 1
                 })
                 return
@@ -79,6 +80,7 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                 UIView.animate(withDuration: 0.3, animations: {
                     card.center = CGPoint(x: card.center.x + 200, y: card.center.y + 75)
                     card.alpha = 0
+                    print("제스쳐 끝나고 좋아요 표시 uid : \(self.nearbyUserSet[self.userViewCount!])")
                     self.userViewCount = self.userViewCount! - 1
                 })
                 return
@@ -86,30 +88,30 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
             UIView.animate(withDuration: 1, animations: {
                 print("팬제스쳐 끝")
                 card.center = self.view.center
-               self.likeOrHateImageViewArray[self.userViewCount!].alpha = 0
+                self.likeOrHateImageViewArray[self.userViewCount!].alpha = 0
             })
         }
     }
-
+    
     //진입점 - 초기화
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "뒤로", style: .plain, target:self , action: #selector(handleBack))
-
+        
         locationManager.delegate = self                            //locationManager의 델리게이트를 self로 설정
         locationManager.desiredAccuracy = kCLLocationAccuracyBest    //정확도를 최고로 설정
         locationManager.requestWhenInUseAuthorization()             //위치데이터를 추적하기 위해서 사용자에게 승인 요구
         locationManager.requestAlwaysAuthorization()                //백그라운드에서도 사용하겠다 사용 요구
-        locationManager.distanceFilter = 1000                      //1000미터 이상의 위치 변화가 생겼을 때 알림을 받는다.
+        locationManager.distanceFilter = 300                      //1000미터 이상의 위치 변화가 생겼을 때 알림을 받는다.
         locationManager.startUpdatingLocation()                    // 위치 업데이트 시작
         
         //2.위치 데이터 저장할 db 위치지정 , 변수 초기화
         firDataBaseRef = Database.database().reference().child("location")
         geoFireRef = Database.database().reference().child("location")
         geoFire = GeoFire(firebaseRef: geoFireRef!)
-
+        
     }
-
+    
     //위치가 변경될 때마다  이 메서드가 호출되며 가장 최근 위치 데이터를 배열의 마지막 객체에 포함하는 CLLocatoin 객체들의 배열이 인자로 전달된다.
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
@@ -125,7 +127,6 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         let horizontalAccuracy = location.horizontalAccuracy //수직정확도
         let altitude = location.altitude // 고도
         
-        
         //거리구하기 37.5578239,126.95218069999999.//서울 시청 37.5662952,126.97794509999994 //신촌역37.559768,126.94230800000003  진주 : 35.1617059,128.11498189999998
         let anotherUserLocation = CLLocation(latitude: 37.5578239, longitude: 126.95218069999999) //상대방 위치   -> CLLocation을 지오 로케이션을 이용해서 주소로 바꿀 수 있음!
         let distance = location.distance(from: anotherUserLocation)     // 2464.20431497264m  ->   2.464km
@@ -135,23 +136,26 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         guard let uid = Auth.auth().currentUser?.uid else {
             return
         }
-        
         //4.나의 위치데이터 저장 및 업데이트
         geoFire?.setLocation(location, forKey: uid)
         
         print("위도: \(currentLatitude) 경도: \(currentLongtitude) 수평: \(verticalAccuracy) 수직: \(horizontalAccuracy) 고도: \(altitude) 거리: \(distance/1000)km" )
         
-        
         //비동기 방식으로 나와 3km 이내 있는 사람을 호출한다.
         let myQuery = geoFire?.query(at: location, withRadius: 3)
         myQuery?.observe(.keyEntered, with: { (key:String!, location:CLLocation!) in
             print("3km 이내 유저 key:" , key, "with location :" , location)
-            self.nearbyUserSet.insert(key)
+            
+            if uid != key {
+            self.nearbyUserSet.append(key)
+            }
+            
+            
             print("나와 3km이내 있는 사람 몇명? \(self.nearbyUserSet.count)")
             
         })
         
-        //geoFire 데이터 불러오기가 모두 종료되었을때 실행되는 함수
+        //geoFire 데이터 불러오기가 모두 완료 종료 되었을때 실행되는 함수
         myQuery?.observeReady {
             
             //나 근처에 있는 사람 uid 가져 오기
@@ -162,13 +166,13 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                 ref.child("users").child(uid).child("profileImageUrl").observeSingleEvent(of: .value, with: { (snapshot) in
                     print("nearbyUserProfileUrl.append 넣고 있음")
                     self.nearbyUserProfileUrl.append(snapshot.value as! String)
-
+                    
                 }, withCancel: nil)
             }
-
-            let alert = UIAlertController(title: "알림 ", message:"당신 3km 주변에 \(self.nearbyUserSet.count)사람 정도 있음", preferredStyle: UIAlertControllerStyle.alert)
+            
+            let alert = UIAlertController(title: "알림 ", message:"님 주변에 \(self.nearbyUserSet.count)사람 정도 있음", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "ok", style:  UIAlertActionStyle.default, handler: { (action) in
-               
+                
                 print("ok 눌렀음!")
                 
                 self.userViewCount = self.nearbyUserProfileUrl.count - 1
@@ -177,7 +181,7 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                     
                     //뷰
                     let newView = UIView(frame: CGRect(x: self.view.frame.width / 2 - (250 / 2) , y: self.view.frame.height / 2 - (300 / 2), width: 250, height: 300))
-                        newView.backgroundColor = .black
+                    newView.backgroundColor = .black
                     let panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.handlePanGesture))
                     newView.addGestureRecognizer(panGesture)
                     newView.contentMode = .scaleAspectFill
@@ -193,15 +197,13 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                     
                     
                     //좋아요 싫어요 이미지
-                    var likeOrHateImageView = UIImageView(frame:CGRect(x: 50, y: 50, width: 100, height: 100))
+                    let likeOrHateImageView = UIImageView(frame:CGRect(x: 50, y: 50, width: 100, height: 100))
                     likeOrHateImageView.image = UIImage(named: "good.png")
                     likeOrHateImageView.alpha = 0
                     self.likeOrHateImageViewArray.append(likeOrHateImageView)
                     newUserImage.addSubview(likeOrHateImageView)
                     
-                    }
-                //나와 3km 이내 있는 사람 전부 삭제
-               // self.nearbyUserSet.removeAll()
+                }
             }))
             
             self.present(alert, animated: true, completion: nil)
@@ -218,6 +220,4 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         // 현재의 상태를 체크하고 그에 맞는 처리를 실시한다.
         print("didChangeAuthorization: \(status.rawValue)")
     }
-    
-    
 }

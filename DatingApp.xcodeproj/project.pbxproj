@@ -18,7 +18,6 @@
 		52419BC620746DED00E4DB8C /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52419BC520746DED00E4DB8C /* User.swift */; };
 		52419BC92074783D00E4DB8C /* LoginController+handlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52419BC82074783D00E4DB8C /* LoginController+handlers.swift */; };
 		52419BCC2074858100E4DB8C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52419BCB2074858100E4DB8C /* Extensions.swift */; };
-		5246AC0320AEBB76008745D8 /* PictureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5246AC0220AEBB76008745D8 /* PictureCell.swift */; };
 		5246AC0520AEC0DF008745D8 /* kkk.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 5246AC0420AEC0DF008745D8 /* kkk.jpg */; };
 		525D0BE520B11C250005AAE6 /* good.png in Resources */ = {isa = PBXBuildFile; fileRef = 525D0BE320B11C250005AAE6 /* good.png */; };
 		525D0BE620B11C250005AAE6 /* bad.png in Resources */ = {isa = PBXBuildFile; fileRef = 525D0BE420B11C250005AAE6 /* bad.png */; };
@@ -51,7 +50,6 @@
 		52419BC520746DED00E4DB8C /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		52419BC82074783D00E4DB8C /* LoginController+handlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LoginController+handlers.swift"; sourceTree = "<group>"; };
 		52419BCB2074858100E4DB8C /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		5246AC0220AEBB76008745D8 /* PictureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureCell.swift; sourceTree = "<group>"; };
 		5246AC0420AEC0DF008745D8 /* kkk.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = kkk.jpg; sourceTree = "<group>"; };
 		525D0BE320B11C250005AAE6 /* good.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = good.png; sourceTree = "<group>"; };
 		525D0BE420B11C250005AAE6 /* bad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bad.png; sourceTree = "<group>"; };
@@ -160,7 +158,6 @@
 				52419BC82074783D00E4DB8C /* LoginController+handlers.swift */,
 				5232ED9F20AAB72D009C414A /* MainViewController.swift */,
 				523EDE4620AAD8B2009A95CD /* MapViewController.swift */,
-				5246AC0220AEBB76008745D8 /* PictureCell.swift */,
 				529E780B2076127400B0FD5C /* MyUIView.swift */,
 			);
 			path = Controller;
@@ -359,7 +356,6 @@
 				525ED00D20736DAC007E60B1 /* LoginController.swift in Sources */,
 				529E780C2076127400B0FD5C /* MyUIView.swift in Sources */,
 				52419BC620746DED00E4DB8C /* User.swift in Sources */,
-				5246AC0320AEBB76008745D8 /* PictureCell.swift in Sources */,
 				529E780E2076217600B0FD5C /* Message.swift in Sources */,
 				525ECFFB20736CB0007E60B1 /* AppDelegate.swift in Sources */,
 				528F405120786DEE007E4942 /* ChatMessageCell.swift in Sources */,
