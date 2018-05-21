@@ -36,17 +36,10 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
     }
     
     var picUiViewArray = [UIView]()
-   
     
-    //uiview
-//    lazy var picUiview : UIView = {
-//        let uiview = UIView()
-//        uiview.translatesAutoresizingMaskIntoConstraints = false
-//        uiview.backgroundColor = .black
-//        var panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
-//        uiview.addGestureRecognizer(panGesture)
-//        return uiview
-//    }()
+    var likeOrHateImageViewArray = [UIImageView]()
+    
+    var userViewCount : Int?
     
     //pen gesture 이벤트 처리
     @objc func handlePanGesture(panGesture: UIPanGestureRecognizer) {
@@ -61,16 +54,14 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         //uiview의 중심위치 구해주기
         card.center = CGPoint(x: view.center.x + point.x, y: view.center.y + point.y)
         
-        print("card.center.x: \(card.center.x) , view.center.x: \(view.center.x), xFromCenter:\(xFromCenter)")
-        
         //왼쪽으로 스와이프 했을 때
         if (xFromCenter < 0) {
-           // likeOrHateImageView.image = UIImage(named: "bad.png")
+            self.likeOrHateImageViewArray[self.userViewCount!].image = UIImage(named: "bad.png")
         }else if(xFromCenter > 0){
-            //likeOrHateImageView.image = UIImage(named: "good.png")
+             self.likeOrHateImageViewArray[self.userViewCount!].image = UIImage(named: "good.png")
         }
         // 알파값은 점점 진해지게 0 -> 1
-       // likeOrHateImageView.alpha = abs(xFromCenter) / view.center.x
+        self.likeOrHateImageViewArray[self.userViewCount!].alpha = abs(xFromCenter) / view.center.x
         
         //panGesture가 끝이 났을때
         if panGesture.state == UIGestureRecognizerState.ended {
@@ -80,6 +71,7 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                 UIView.animate(withDuration: 0.3, animations: {
                     card.center = CGPoint(x: card.center.x - 200, y: card.center.y + 75)
                     card.alpha = 0
+                    self.userViewCount = self.userViewCount! - 1
                 })
                 return
             }else if (card.center.x > (view.frame.width - 75)){
@@ -87,39 +79,18 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                 UIView.animate(withDuration: 0.3, animations: {
                     card.center = CGPoint(x: card.center.x + 200, y: card.center.y + 75)
                     card.alpha = 0
+                    self.userViewCount = self.userViewCount! - 1
                 })
                 return
             }
             UIView.animate(withDuration: 1, animations: {
                 print("팬제스쳐 끝")
                 card.center = self.view.center
-                //self.likeOrHateImageView.alpha = 0
+               self.likeOrHateImageViewArray[self.userViewCount!].alpha = 0
             })
         }
     }
-    
-//    //유저 이미지
-//    let userImageView : UIImageView = {
-//        let img = UIImageView()
-//        img.translatesAutoresizingMaskIntoConstraints = false
-//        img.image = UIImage(named: "kkk.jpg")
-//        img.backgroundColor = .green
-//        //img.alpha = 1
-//        return img
-//    }()
-    
-    
-//    //좋아요 싫어요 이미지
-//    let likeOrHateImageView : UIImageView = {
-//        let img = UIImageView()
-//        img.translatesAutoresizingMaskIntoConstraints = false
-//        img.image = UIImage(named: "good.png")
-//        img.backgroundColor = .green
-//        img.alpha = 0
-//        return img
-//    }()
 
-    
     //진입점 - 초기화
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -137,12 +108,6 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         geoFireRef = Database.database().reference().child("location")
         geoFire = GeoFire(firebaseRef: geoFireRef!)
 
-//        view.addSubview(picUiview)
-//        picUiview.addSubview(userImageView)
-//        picUiview.addSubview(likeOrHateImageView)
-        
-        setupCollectionViewAndBtn()
-        
     }
 
     //위치가 변경될 때마다  이 메서드가 호출되며 가장 최근 위치 데이터를 배열의 마지막 객체에 포함하는 CLLocatoin 객체들의 배열이 인자로 전달된다.
@@ -206,11 +171,13 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                
                 print("ok 눌렀음!")
                 
+                self.userViewCount = self.nearbyUserProfileUrl.count - 1
+                
                 for i in 0..<self.nearbyUserProfileUrl.count{
                     
                     //뷰
                     let newView = UIView(frame: CGRect(x: self.view.frame.width / 2 - (250 / 2) , y: self.view.frame.height / 2 - (300 / 2), width: 250, height: 300))
-                        newView.backgroundColor = .yellow
+                        newView.backgroundColor = .black
                     let panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.handlePanGesture))
                     newView.addGestureRecognizer(panGesture)
                     newView.contentMode = .scaleAspectFill
@@ -225,6 +192,12 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                     newView.addSubview(newUserImage)
                     
                     
+                    //좋아요 싫어요 이미지
+                    var likeOrHateImageView = UIImageView(frame:CGRect(x: 50, y: 50, width: 100, height: 100))
+                    likeOrHateImageView.image = UIImage(named: "good.png")
+                    likeOrHateImageView.alpha = 0
+                    self.likeOrHateImageViewArray.append(likeOrHateImageView)
+                    newUserImage.addSubview(likeOrHateImageView)
                     
                     }
                 //나와 3km 이내 있는 사람 전부 삭제
@@ -246,24 +219,5 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         print("didChangeAuthorization: \(status.rawValue)")
     }
     
-    //컬랙션뷰 레이아웃 및 버튼 제약조건
-    func setupCollectionViewAndBtn(){
-
-        
-//        picUiview.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-//        picUiview.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-//        picUiview.widthAnchor.constraint(equalToConstant: 250).isActive = true
-//        picUiview.heightAnchor.constraint(equalToConstant: 300).isActive = true
-//
-//        userImageView.centerXAnchor.constraint(equalTo: picUiview.centerXAnchor).isActive = true
-//        userImageView.centerYAnchor.constraint(equalTo: picUiview.centerYAnchor).isActive = true
-//        userImageView.widthAnchor.constraint(equalTo: picUiview.widthAnchor).isActive = true
-//        userImageView.heightAnchor.constraint(equalTo: picUiview.heightAnchor).isActive = true
-//
-//        likeOrHateImageView.centerXAnchor.constraint(equalTo: picUiview.centerXAnchor).isActive = true
-//        likeOrHateImageView.centerYAnchor.constraint(equalTo: picUiview.centerYAnchor).isActive = true
-//        likeOrHateImageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
-//        likeOrHateImageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-    }
     
 }
