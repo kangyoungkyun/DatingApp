@@ -13,8 +13,7 @@ import Contacts
 import GeoFire
 import Firebase
 
-
-class MapViewController: UIViewController,CLLocationManagerDelegate,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
+class MapViewController: UIViewController,CLLocationManagerDelegate {
     
     //가까이 있는 user key값 담기
     var nearbyUserSet = Set<String>()
@@ -36,15 +35,18 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
         dismiss(animated: true, completion: nil)
     }
     
+    var picUiViewArray = [UIView]()
+   
+    
     //uiview
-    lazy var picUiview : UIView = {
-        let uiview = UIView()
-        uiview.translatesAutoresizingMaskIntoConstraints = false
-        uiview.backgroundColor = .yellow
-        var panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
-        uiview.addGestureRecognizer(panGesture)
-        return uiview
-    }()
+//    lazy var picUiview : UIView = {
+//        let uiview = UIView()
+//        uiview.translatesAutoresizingMaskIntoConstraints = false
+//        uiview.backgroundColor = .black
+//        var panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
+//        uiview.addGestureRecognizer(panGesture)
+//        return uiview
+//    }()
     
     //pen gesture 이벤트 처리
     @objc func handlePanGesture(panGesture: UIPanGestureRecognizer) {
@@ -63,12 +65,12 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
         
         //왼쪽으로 스와이프 했을 때
         if (xFromCenter < 0) {
-            imageView.image = UIImage(named: "bad.png")
+           // likeOrHateImageView.image = UIImage(named: "bad.png")
         }else if(xFromCenter > 0){
-            imageView.image = UIImage(named: "good.png")
+            //likeOrHateImageView.image = UIImage(named: "good.png")
         }
         // 알파값은 점점 진해지게 0 -> 1
-        imageView.alpha = abs(xFromCenter) / view.center.x
+       // likeOrHateImageView.alpha = abs(xFromCenter) / view.center.x
         
         //panGesture가 끝이 났을때
         if panGesture.state == UIGestureRecognizerState.ended {
@@ -80,7 +82,6 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
                     card.alpha = 0
                 })
                 return
-                
             }else if (card.center.x > (view.frame.width - 75)){
                 //오른쪽으로 스와이프 했을 때
                 UIView.animate(withDuration: 0.3, animations: {
@@ -89,121 +90,41 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
                 })
                 return
             }
-            
-            
-            
             UIView.animate(withDuration: 1, animations: {
                 print("팬제스쳐 끝")
                 card.center = self.view.center
-                self.imageView.alpha = 0
+                //self.likeOrHateImageView.alpha = 0
             })
-            
         }
     }
-    //좋아요 싫어요 이미지
-    let imageView : UIImageView = {
-        let img = UIImageView()
-        img.translatesAutoresizingMaskIntoConstraints = false
-        img.image = UIImage(named: "good.png")
-        img.backgroundColor = .green
-        img.alpha = 0
-        return img
-    }()
     
-    //호감, 비호감 버튼 객체, 컬렉션뷰 객체
-    lazy var btnGood:UIButton = {
-        let btn = UIButton()
-        btn.setTitle("호감", for: .normal)
-        btn.setTitleColor(UIColor.black, for: .normal)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.backgroundColor = .yellow
-        btn.addTarget(self, action: #selector(btnGoodHandler), for: .touchUpInside)
-        return btn
-    }()
-    
-    @objc func btnGoodHandler(){
-        print("호감 눌렀다!")
-    }
-    
-    lazy var btnNotGood:UIButton = {
-        let btn = UIButton()
-        btn.setTitle("글쎄 좀..", for: .normal)
-        btn.setTitleColor(UIColor.black, for: .normal)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.backgroundColor = .red
-        btn.addTarget(self, action: #selector(btnNotGoodHandler), for: .touchUpInside)
-        return btn
-    }()
-    
-    @objc func btnNotGoodHandler(){
-        print("싫어요ㅜㅜㅜㅡㅜㅡㅜㅡㅜㅡㅜ")
-    }
+//    //유저 이미지
+//    let userImageView : UIImageView = {
+//        let img = UIImageView()
+//        img.translatesAutoresizingMaskIntoConstraints = false
+//        img.image = UIImage(named: "kkk.jpg")
+//        img.backgroundColor = .green
+//        //img.alpha = 1
+//        return img
+//    }()
     
     
-    let myCollectionView : UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        let myCollectoinView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
-        myCollectoinView.showsHorizontalScrollIndicator = false
-        myCollectoinView.translatesAutoresizingMaskIntoConstraints = false
-        myCollectoinView.backgroundColor = UIColor.darkGray
-        myCollectoinView.allowsMultipleSelection = false
-        
-        
-        
-        return myCollectoinView
-    }()
-    //
-    
-    @objc func handleSwipeLeft(from recognizer: UIGestureRecognizer?) {
-        print("왼쪽으로 스와이프")
-    }
-    
-    //컬랙션 뷰 셀 개수
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return nearbyUserSet.count
-    }
-    
-    //컬랙션 뷰 셀 구성 - 이미지 넣기
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        //self.nearbyUserProfileUrl.removeAll()
-        let cell=collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as? PictureCell
-        cell?.backgroundColor = .green
-        
-        print("nearbyUserProfileUrl.count \(nearbyUserProfileUrl.count)")
-        
-        if nearbyUserProfileUrl.count > 0{
-            cell?.imageView.loadImageUsingCacheWithUrlString(nearbyUserProfileUrl[indexPath.row])
-            let swipeUpGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeLeft))
-            swipeUpGestureRecognizer.direction = .left
-            cell?.addGestureRecognizer(swipeUpGestureRecognizer)
-        }else if nearbyUserProfileUrl.count == 0{
-            cell?.imageView.image = UIImage(named: "kkk.jpg")
-        }
-        
-        return cell!
-    }
-    
-    //컬렉션뷰 셀 사이즈 조정
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = myCollectionView.frame.width
-        let height: CGFloat = myCollectionView.frame.height
-        return CGSize(width: width, height: height)
-    }
+//    //좋아요 싫어요 이미지
+//    let likeOrHateImageView : UIImageView = {
+//        let img = UIImageView()
+//        img.translatesAutoresizingMaskIntoConstraints = false
+//        img.image = UIImage(named: "good.png")
+//        img.backgroundColor = .green
+//        img.alpha = 0
+//        return img
+//    }()
+
     
     //진입점 - 초기화
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "뒤로", style: .plain, target:self , action: #selector(handleBack))
-        
-        
-        //컬렉션 뷰 셀 등록
-        myCollectionView.register(PictureCell.self, forCellWithReuseIdentifier: "Cell")
-        myCollectionView.delegate = self
-        myCollectionView.dataSource = self
-        
+
         locationManager.delegate = self                            //locationManager의 델리게이트를 self로 설정
         locationManager.desiredAccuracy = kCLLocationAccuracyBest    //정확도를 최고로 설정
         locationManager.requestWhenInUseAuthorization()             //위치데이터를 추적하기 위해서 사용자에게 승인 요구
@@ -211,21 +132,19 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
         locationManager.distanceFilter = 1000                      //1000미터 이상의 위치 변화가 생겼을 때 알림을 받는다.
         locationManager.startUpdatingLocation()                    // 위치 업데이트 시작
         
-        
         //2.위치 데이터 저장할 db 위치지정 , 변수 초기화
         firDataBaseRef = Database.database().reference().child("location")
         geoFireRef = Database.database().reference().child("location")
         geoFire = GeoFire(firebaseRef: geoFireRef!)
+
+//        view.addSubview(picUiview)
+//        picUiview.addSubview(userImageView)
+//        picUiview.addSubview(likeOrHateImageView)
         
-        view.addSubview(btnGood)
-        view.addSubview(btnNotGood)
-        view.addSubview(myCollectionView)
-        view.addSubview(picUiview)
-        picUiview.addSubview(imageView)
         setupCollectionViewAndBtn()
         
     }
-    
+
     //위치가 변경될 때마다  이 메서드가 호출되며 가장 최근 위치 데이터를 배열의 마지막 객체에 포함하는 CLLocatoin 객체들의 배열이 인자로 전달된다.
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
@@ -267,34 +186,49 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
             
         })
         
-        
         //geoFire 데이터 불러오기가 모두 종료되었을때 실행되는 함수
         myQuery?.observeReady {
             
             //나 근처에 있는 사람 uid 가져 오기
             for uid in self.nearbyUserSet{
-                
                 //1. index 가지고 firebase 의 users의 uid에 해당하는 profile  url 가지고 와서 imageview에 뿌려주기
                 let ref = Database.database().reference()
                 
                 ref.child("users").child(uid).child("profileImageUrl").observeSingleEvent(of: .value, with: { (snapshot) in
                     print("nearbyUserProfileUrl.append 넣고 있음")
                     self.nearbyUserProfileUrl.append(snapshot.value as! String)
-                    self.myCollectionView.reloadData()
+
                 }, withCancel: nil)
-                
-                //3. 좋아요 버튼 or 싫어요 버튼 누르면 다시 for 문 돌아감
-                //4. for 문이 끝나면 없습니다...표시..
             }
-            
-            //# 중요!!!!!!
-            //* 유저 uid를 가지고 users에 있는 uid 의 profile url을 가져와서 imageView에 하나씩 뿌려주기
-            // 좋아요 or 싫어요 버튼 누르면 배열에 다음 요소의 데이터를 image view에 넣어서 뿌려주기...
-            
-            let alert = UIAlertController(title: "알림 ", message:"당신 3km 주변에 \(self.nearbyUserSet.count)사람 정도 있네요", preferredStyle: UIAlertControllerStyle.alert)
+
+            let alert = UIAlertController(title: "알림 ", message:"당신 3km 주변에 \(self.nearbyUserSet.count)사람 정도 있음", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "ok", style:  UIAlertActionStyle.default, handler: { (action) in
+               
+                print("ok 눌렀음!")
+                
+                for i in 0..<self.nearbyUserProfileUrl.count{
+                    
+                    //뷰
+                    let newView = UIView(frame: CGRect(x: self.view.frame.width / 2 - (250 / 2) , y: self.view.frame.height / 2 - (300 / 2), width: 250, height: 300))
+                        newView.backgroundColor = .yellow
+                    let panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.handlePanGesture))
+                    newView.addGestureRecognizer(panGesture)
+                    newView.contentMode = .scaleAspectFill
+                    
+                    self.view.addSubview(newView)
+                    
+                    //사진
+                    let newUserImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 250, height: 300))
+                    newUserImage.loadImageUsingCacheWithUrlString(self.nearbyUserProfileUrl[i])
+                    newUserImage.layer.cornerRadius = 50
+                    newUserImage.layer.masksToBounds = true
+                    newView.addSubview(newUserImage)
+                    
+                    
+                    
+                    }
                 //나와 3km 이내 있는 사람 전부 삭제
-                self.nearbyUserSet.removeAll()
+               // self.nearbyUserSet.removeAll()
             }))
             
             self.present(alert, animated: true, completion: nil)
@@ -314,30 +248,22 @@ class MapViewController: UIViewController,CLLocationManagerDelegate,UICollection
     
     //컬랙션뷰 레이아웃 및 버튼 제약조건
     func setupCollectionViewAndBtn(){
-        myCollectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive=true
-        myCollectionView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive=true
-        myCollectionView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive=true
-        myCollectionView.bottomAnchor.constraint(equalTo: btnGood.topAnchor, constant: 0).isActive=true
+
         
-        btnGood.leftAnchor.constraint(equalTo: view.leftAnchor).isActive=true
-        btnGood.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5).isActive = true
-        btnGood.heightAnchor.constraint(equalToConstant: 35).isActive = true
-        btnGood.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: 0).isActive=true
-        
-        btnNotGood.rightAnchor.constraint(equalTo: view.rightAnchor).isActive=true
-        btnNotGood.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5).isActive = true
-        btnNotGood.heightAnchor.constraint(equalToConstant: 35).isActive = true
-        btnNotGood.bottomAnchor.constraint(equalTo: view.bottomAnchor,constant: 0).isActive=true
-        
-        picUiview.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        picUiview.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        picUiview.widthAnchor.constraint(equalToConstant: 250).isActive = true
-        picUiview.heightAnchor.constraint(equalToConstant: 300).isActive = true
-        
-        imageView.centerXAnchor.constraint(equalTo: picUiview.centerXAnchor).isActive = true
-        imageView.centerYAnchor.constraint(equalTo: picUiview.centerYAnchor).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+//        picUiview.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+//        picUiview.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+//        picUiview.widthAnchor.constraint(equalToConstant: 250).isActive = true
+//        picUiview.heightAnchor.constraint(equalToConstant: 300).isActive = true
+//
+//        userImageView.centerXAnchor.constraint(equalTo: picUiview.centerXAnchor).isActive = true
+//        userImageView.centerYAnchor.constraint(equalTo: picUiview.centerYAnchor).isActive = true
+//        userImageView.widthAnchor.constraint(equalTo: picUiview.widthAnchor).isActive = true
+//        userImageView.heightAnchor.constraint(equalTo: picUiview.heightAnchor).isActive = true
+//
+//        likeOrHateImageView.centerXAnchor.constraint(equalTo: picUiview.centerXAnchor).isActive = true
+//        likeOrHateImageView.centerYAnchor.constraint(equalTo: picUiview.centerYAnchor).isActive = true
+//        likeOrHateImageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+//        likeOrHateImageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
     }
     
 }
