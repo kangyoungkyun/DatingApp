@@ -146,6 +146,7 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         myQuery?.observe(.keyEntered, with: { (key:String!, location:CLLocation!) in
             print("3km 이내 유저 key:" , key, "with location :" , location)
             
+            //나의 아이디 제외
             if uid != key {
             self.nearbyUserSet.append(key)
             }

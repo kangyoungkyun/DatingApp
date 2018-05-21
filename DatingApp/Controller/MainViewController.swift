@@ -8,22 +8,47 @@
 
 import UIKit
 import Firebase
-class MainViewController: UIViewController {
-    
+class MainViewController: UIViewController,UITableViewDelegate,UITableViewDataSource {
+   
+    private var myTableView: UITableView!
+
     var ref: DatabaseReference!
     var mainViewController: MainViewController?
     //진입점
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "로그아웃", style: .plain, target:self , action: #selector(handleLogout))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "ShowMe", style: .plain, target: self, action: #selector(handleMyLocation))
+
+        let barHeight: CGFloat = UIApplication.shared.statusBarFrame.size.height
+        let displayWidth: CGFloat = self.view.frame.width
+        let displayHeight: CGFloat = self.view.frame.height
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "showme", style: .plain, target: self, action: #selector(handleMyLocation))
-        
+        myTableView = UITableView(frame: CGRect(x: 0, y: barHeight, width: displayWidth, height: displayHeight - barHeight))
+        myTableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
+        myTableView.dataSource = self
+        myTableView.delegate = self
+        self.view.addSubview(myTableView)
         
         //로그인or로그아웃 체크
         checkIfUserIsLoggedIn()
         
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 3
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell(style: .value1, reuseIdentifier: "MyCell")
+        cell.textLabel!.text = "서울 신촌로에서 호감을 표시했어요♥"
+        cell.detailTextLabel?.text = "5분전"
+        return cell
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 70
     }
     
     //로그인or로그아웃 체크 함수
