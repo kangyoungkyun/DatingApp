@@ -5,7 +5,6 @@
 //  Created by MacBookPro on 2018. 5. 15..
 //  Copyright © 2018년 MacBookPro. All rights reserved.
 //
-
 import UIKit
 import MapKit
 import CoreLocation
@@ -140,7 +139,6 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         showMePeopleAroundMe(location: location, uid:uid)
     }
     
-    
     //유저가 좋아요 누르면 현재 텍스트 위치 표시
     func getTextAddress(latitude:Double, longtitude:Double, uid:String){
         print("넘어온 위도 : \(latitude) , 넘어온 경도 : \(longtitude)")
@@ -206,7 +204,7 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                 }, withCancel: nil)
             }
             
-            let alert = UIAlertController(title: "알림 ", message:"님 주변에 \(self.nearbyUserSet.count)사람 정도 있음", preferredStyle: UIAlertControllerStyle.alert)
+            let alert = UIAlertController(title: "알림 ", message:"님 주변에 \(self.nearbyUserSet.count)명의 사람이 있습니다", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "ok", style:  UIAlertActionStyle.default, handler: { (action) in
                 
                 print("ok 눌렀음!")
@@ -227,24 +225,33 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                     //사진
                     let newUserImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 250, height: 300))
                     newUserImage.loadImageUsingCacheWithUrlString(self.nearbyUserProfileUrl[i])
-                    newUserImage.layer.cornerRadius = 50
+                    newUserImage.layer.cornerRadius = 25
                     newUserImage.layer.masksToBounds = true
                     newView.addSubview(newUserImage)
                     
-                    
                     //좋아요 싫어요 이미지
-                    let likeOrHateImageView = UIImageView(frame:CGRect(x: 50, y: 50, width: 100, height: 100))
+                    let likeOrHateImageView = UIImageView(frame:CGRect(x: newView.frame.width / 2 - (100 / 2), y: -90, width: 100, height: 100))
                     likeOrHateImageView.image = UIImage(named: "good.png")
                     likeOrHateImageView.alpha = 0
                     self.likeOrHateImageViewArray.append(likeOrHateImageView)
-                    newUserImage.addSubview(likeOrHateImageView)
+                    newView.addSubview(likeOrHateImageView)
                     
+                    //신고하기 이미지
+                    let reportBtn = UIButton(frame:CGRect(x: newView.frame.width - 25, y: newView.frame.height - newUserImage.frame.height - 25, width: 25, height: 25))
+                    reportBtn.setImage(UIImage(named:"report"), for: UIControlState())
+                    reportBtn.addTarget(self, action: #selector(self.reportBtnHandler), for: .touchUpInside)
+                    newView.addSubview(reportBtn)
                 }
             }))
             
             self.present(alert, animated: true, completion: nil)
         }
     }
+    
+    @objc func reportBtnHandler(){
+        print("신고하기 버튼")
+    }
+    
     //locationManager 관련 매서드
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("위치기반 기능 에러발생 : \(error.localizedDescription)")

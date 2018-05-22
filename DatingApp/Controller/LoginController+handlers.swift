@@ -95,12 +95,10 @@ extension LoginController: UIImagePickerControllerDelegate, UINavigationControll
         let usersReference = ref.child("users").child(uid)
         //최종 저장
         usersReference.updateChildValues(values, withCompletionBlock: { (err, ref) in
-            
             if let err = err {
                 print(err)
                 return
             }
-            
             let user = User(dic:values)
             //등록 할때 메시지 컨트롤러에 있는 setupnavbar 함수 호출
             self.mainViewController?.setupNavBarWithUser(user: user)
