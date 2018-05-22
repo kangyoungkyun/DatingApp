@@ -129,10 +129,6 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         let horizontalAccuracy = location.horizontalAccuracy //수직정확도
         let altitude = location.altitude // 고도
         
-        //거리구하기 37.5578239,126.95218069999999.//서울 시청 37.5662952,126.97794509999994 //신촌역37.559768,126.94230800000003  진주 : 35.1617059,128.11498189999998
-        let anotherUserLocation = CLLocation(latitude: 37.5578239, longitude: 126.95218069999999) //상대방 위치   -> CLLocation을 지오 로케이션을 이용해서 주소로 바꿀 수 있음!
-        let distance = location.distance(from: anotherUserLocation)     // 2464.20431497264m  ->   2.464km
-        
         //3. 나의 현재 위치 데이터 삽입 - forKey 값을 uid로 변경
         //내가 로그인한 아이디
         guard let uid = Auth.auth().currentUser?.uid else {
@@ -141,19 +137,16 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         //4.나의 위치데이터 저장 및 업데이트
         geoFire?.setLocation(location, forKey: uid)
         
-        print("위도: \(currentLatitude) 경도: \(currentLongtitude) 수평: \(verticalAccuracy) 수직: \(horizontalAccuracy) 고도: \(altitude) 거리: \(distance/1000)km" )
         
         //비동기 방식으로 나와 3km 이내 있는 사람을 호출한다.
         let myQuery = geoFire?.query(at: location, withRadius: 3)
         myQuery?.observe(.keyEntered, with: { (key:String!, location:CLLocation!) in
             print("3km 이내 유저 key:" , key, "with location :" , location)
             
-            //나의 아이디 제외
+            //나의 아이디 제외하고 근처에 있는 사람들 넣어주기
             if uid != key {
             self.nearbyUserSet.append(key)
             }
-            
-            
             print("나와 3km이내 있는 사람 몇명? \(self.nearbyUserSet.count)")
             
         })
@@ -248,20 +241,13 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                 //key 값을 이용해서 주소 찾기
                 let city = addressDictionary!["City"]
                 let state = addressDictionary!["State"]
-                
-                print("\(city!)")
-                print("\(state!)")
-                
-                address2 = "\(address!) \(city!)"
-                
-//                let alert = UIAlertController(title: "알림1 ", message:"교회가 있는곳은 \(address2)", preferredStyle: UIAlertControllerStyle.alert)
-//                alert.addAction(UIAlertAction(title: "ㅇㅇ", style: UIAlertActionStyle.default, handler: nil))
-//                self.present(alert, animated: true, completion: nil)
 
-                print("\(state!) \(city!) 어딘가에서 호감발생")
+                address2 = "\(state!) \(city!) 어딘가에서 당신에게 호감을 표시했습니다."
+
+                print("\(state!) \(city!) 어딘가에서 당신에게 호감을 표시했습니다.")
             }
         })
-        return "\(state!) \(city!) 어딘가에서 호감발생"
+        return "\(address2)"
     }
 
 }
