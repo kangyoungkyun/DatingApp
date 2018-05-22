@@ -71,6 +71,7 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                 UIView.animate(withDuration: 0.3, animations: {
                     card.center = CGPoint(x: card.center.x - 200, y: card.center.y + 75)
                     card.alpha = 0
+                    self.getTextAddress()
                     print("제스쳐 끝나고 싫어요 표시 uid : \(self.nearbyUserSet[self.userViewCount!])")
                     self.userViewCount = self.userViewCount! - 1
                 })
@@ -80,6 +81,7 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                 UIView.animate(withDuration: 0.3, animations: {
                     card.center = CGPoint(x: card.center.x + 200, y: card.center.y + 75)
                     card.alpha = 0
+                    self.getTextAddress()
                     print("제스쳐 끝나고 좋아요 표시 uid : \(self.nearbyUserSet[self.userViewCount!])")
                     self.userViewCount = self.userViewCount! - 1
                 })
@@ -221,4 +223,45 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         // 현재의 상태를 체크하고 그에 맞는 처리를 실시한다.
         print("didChangeAuthorization: \(status.rawValue)")
     }
+    
+    
+    
+    func getTextAddress() -> String{
+        
+        var address2 : String?
+        //역방향 지오코딩
+        let geoCoder = CLGeocoder()
+        //cllocatoin객체는 위도와 경로 좌표로 초기화 37.5096815,126.89033619999998
+        let newLocation = CLLocation(latitude: 37.5096815, longitude: 126.89033619999998)
+        
+        //geoCoder에 reverseGeocodeLocation 메서드로 전달 된다.
+        geoCoder.reverseGeocodeLocation(newLocation, completionHandler: { (placemarks, error) in
+            if error != nil {
+                print("에러 발생 \(error!.localizedDescription)")
+            }
+            //값이 있으면 배열 값으로 반환
+            if placemarks!.count > 0 {
+                let placemark = placemarks![0]
+                //딕셔너리 값으로 반환
+                let addressDictionary = placemark.addressDictionary
+                
+                //key 값을 이용해서 주소 찾기
+                let city = addressDictionary!["City"]
+                let state = addressDictionary!["State"]
+                
+                print("\(city!)")
+                print("\(state!)")
+                
+                address2 = "\(address!) \(city!)"
+                
+//                let alert = UIAlertController(title: "알림1 ", message:"교회가 있는곳은 \(address2)", preferredStyle: UIAlertControllerStyle.alert)
+//                alert.addAction(UIAlertAction(title: "ㅇㅇ", style: UIAlertActionStyle.default, handler: nil))
+//                self.present(alert, animated: true, completion: nil)
+
+                print("\(state!) \(city!) 어딘가에서 호감발생")
+            }
+        })
+        return "\(state!) \(city!) 어딘가에서 호감발생"
+    }
+
 }

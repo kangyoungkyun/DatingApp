@@ -207,44 +207,47 @@ class MapStudyViewController: UIViewController,CLLocationManagerDelegate {
 }
 
 
-
-/*
- var address2 : String?
- 
- //역방향 지오코딩
- 
- let geoCoder = CLGeocoder()
- //cllocatoin객체는 위도와 경로 좌표로 초기화
- //let newLocation = CLLocation(latitude: 37.3316833, longitude: -122.0301031)
- 
- //geoCoder에 reverseGeocodeLocation 메서드로 전달 된다.
- geoCoder.reverseGeocodeLocation(anotherUserLocation, completionHandler: { (placemarks, error) in
- if error != nil {
- print("에러 발생 \(error!.localizedDescription)")
- }
- //값이 있으면 배열 값으로 반환
- if placemarks!.count > 0 {
- let placemark = placemarks![0]
- //딕셔너리 값으로 반환
- let addressDictionary = placemark.addressDictionary
- 
- //key 값을 이용해서 주소 찾기
- let address = addressDictionary!["Street"]
- let city = addressDictionary!["City"]
- let state = addressDictionary!["State"]
- let zip = addressDictionary!["ZIP"]
- 
- address2 = "\(address!) \(city!) \(state!)"
- 
- let alert = UIAlertController(title: "알림1 ", message:"교회가 있는곳은 \(address2)", preferredStyle: UIAlertControllerStyle.alert)
- alert.addAction(UIAlertAction(title: "ㅇㅇ", style: UIAlertActionStyle.default, handler: nil))
- self.present(alert, animated: true, completion: nil)
- 
- 
- print("\(address!) \(city!) \(state!)")
- }
- })*/
-
+//func getTextAddress() -> String{
+//    
+//
+//
+// var address2 : String?
+// 
+// //역방향 지오코딩
+// 
+// let geoCoder = CLGeocoder()
+// //cllocatoin객체는 위도와 경로 좌표로 초기화
+// //let newLocation = CLLocation(latitude: 37.3316833, longitude: -122.0301031)
+// 
+// //geoCoder에 reverseGeocodeLocation 메서드로 전달 된다.
+// geoCoder.reverseGeocodeLocation(anotherUserLocation, completionHandler: { (placemarks, error) in
+// if error != nil {
+// print("에러 발생 \(error!.localizedDescription)")
+// }
+// //값이 있으면 배열 값으로 반환
+// if placemarks!.count > 0 {
+// let placemark = placemarks![0]
+// //딕셔너리 값으로 반환
+// let addressDictionary = placemark.addressDictionary
+// 
+// //key 값을 이용해서 주소 찾기
+// let address = addressDictionary!["Street"]
+// let city = addressDictionary!["City"]
+// let state = addressDictionary!["State"]
+// let zip = addressDictionary!["ZIP"]
+// 
+// address2 = "\(address!) \(city!) \(state!)"
+// 
+// let alert = UIAlertController(title: "알림1 ", message:"교회가 있는곳은 \(address2)", preferredStyle: UIAlertControllerStyle.alert)
+// alert.addAction(UIAlertAction(title: "ㅇㅇ", style: UIAlertActionStyle.default, handler: nil))
+// self.present(alert, animated: true, completion: nil)
+// 
+// 
+// print("\(address!) \(city!) \(state!)")
+// }
+// })
+//    return "\(address!) \(city!) \(state!)"
+//}
 
 
 //나의 위치에서 2km 이내있는 사람 불러오기!

@@ -48,7 +48,7 @@ class MainViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
+        return 63
     }
     
     //로그인or로그아웃 체크 함수
