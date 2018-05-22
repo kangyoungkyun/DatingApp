@@ -71,8 +71,8 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                 UIView.animate(withDuration: 0.3, animations: {
                     card.center = CGPoint(x: card.center.x - 200, y: card.center.y + 75)
                     card.alpha = 0
-                    self.getTextAddress()
-                    print("제스쳐 끝나고 싫어요 표시 uid : \(self.nearbyUserSet[self.userViewCount!])")
+                    self.getTextAddress(latitude: self.currentLatitude!, longtitude: self.currentLongtitude!, uid: self.nearbyUserSet[self.userViewCount!])
+                    //print("제스쳐 끝나고 싫어요 표시 uid : \(self.nearbyUserSet[self.userViewCount!])")
                     self.userViewCount = self.userViewCount! - 1
                 })
                 return
@@ -81,8 +81,8 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                 UIView.animate(withDuration: 0.3, animations: {
                     card.center = CGPoint(x: card.center.x + 200, y: card.center.y + 75)
                     card.alpha = 0
-                    self.getTextAddress()
-                    print("제스쳐 끝나고 좋아요 표시 uid : \(self.nearbyUserSet[self.userViewCount!])")
+                    self.getTextAddress(latitude: self.currentLatitude!, longtitude: self.currentLongtitude!, uid: self.nearbyUserSet[self.userViewCount!])
+                    //print("제스쳐 끝나고 좋아요 표시 uid : \(self.nearbyUserSet[self.userViewCount!])")
                     self.userViewCount = self.userViewCount! - 1
                 })
                 return
@@ -114,6 +114,8 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         
     }
     
+    var currentLatitude : Double?
+    var currentLongtitude : Double?
     //위치가 변경될 때마다  이 메서드가 호출되며 가장 최근 위치 데이터를 배열의 마지막 객체에 포함하는 CLLocatoin 객체들의 배열이 인자로 전달된다.
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
@@ -123,11 +125,8 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         
         // 위치 데이터 업데이트 처리
         let location = locations[0] //나의 위치
-        let currentLatitude = location.coordinate.latitude //위도
-        let currentLongtitude = location.coordinate.longitude //경도
-        let verticalAccuracy = location.verticalAccuracy // 수평정확도
-        let horizontalAccuracy = location.horizontalAccuracy //수직정확도
-        let altitude = location.altitude // 고도
+         currentLatitude = location.coordinate.latitude //위도
+         currentLongtitude = location.coordinate.longitude //경도
         
         //3. 나의 현재 위치 데이터 삽입 - forKey 값을 uid로 변경
         //내가 로그인한 아이디
@@ -216,19 +215,20 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         // 현재의 상태를 체크하고 그에 맞는 처리를 실시한다.
         print("didChangeAuthorization: \(status.rawValue)")
     }
+
     
-    
-    
-    func getTextAddress() -> String{
+    //유저가 좋아요 누르면 현재 텍스트 위치 표시
+    func getTextAddress(latitude:Double, longtitude:Double, uid:String){
         
+        print("넘어온 위도 : \(latitude) , 넘어온 경도 : \(longtitude)")
         var address2 : String?
         //역방향 지오코딩
         let geoCoder = CLGeocoder()
         //cllocatoin객체는 위도와 경로 좌표로 초기화 37.5096815,126.89033619999998
-        let newLocation = CLLocation(latitude: 37.5096815, longitude: 126.89033619999998)
+        let myLocation = CLLocation(latitude:  latitude, longitude: longtitude)
         
         //geoCoder에 reverseGeocodeLocation 메서드로 전달 된다.
-        geoCoder.reverseGeocodeLocation(newLocation, completionHandler: { (placemarks, error) in
+        geoCoder.reverseGeocodeLocation(myLocation, completionHandler: { (placemarks, error) in
             if error != nil {
                 print("에러 발생 \(error!.localizedDescription)")
             }
@@ -243,11 +243,14 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
                 let state = addressDictionary!["State"]
 
                 address2 = "\(state!) \(city!) 어딘가에서 당신에게 호감을 표시했습니다."
-
-                print("\(state!) \(city!) 어딘가에서 당신에게 호감을 표시했습니다.")
+                print("\(state!) \(city!) 어딘가에서 내가 \(uid)님에게 호감을 표시했습니다.")
+                
+                //firebase에 상대방 user key 값을 이용해서 분기해주기
+                
+                
             }
         })
-        return "\(address2)"
+        
     }
 
 }
