@@ -125,8 +125,8 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         
         // 위치 데이터 업데이트 처리
         let location = locations[0] //나의 위치
-         currentLatitude = location.coordinate.latitude //위도
-         currentLongtitude = location.coordinate.longitude //경도
+        currentLatitude = location.coordinate.latitude //위도
+        currentLongtitude = location.coordinate.longitude //경도
         
         //3. 나의 현재 위치 데이터 삽입 - forKey 값을 uid로 변경
         //내가 로그인한 아이디
@@ -136,7 +136,48 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         //4.나의 위치데이터 저장 및 업데이트
         geoFire?.setLocation(location, forKey: uid)
         
+        //5. 내 주변에 위치하고 있는 사람들 정보 카드로 보여줘
+        showMePeopleAroundMe(location: location, uid:uid)
+    }
+    
+    
+    //유저가 좋아요 누르면 현재 텍스트 위치 표시
+    func getTextAddress(latitude:Double, longtitude:Double, uid:String){
+        print("넘어온 위도 : \(latitude) , 넘어온 경도 : \(longtitude)")
+        var address2 : String?
+        //역방향 지오코딩
+        let geoCoder = CLGeocoder()
+        //cllocatoin객체는 위도와 경로 좌표로 초기화 37.5096815,126.89033619999998
+        let myLocation = CLLocation(latitude:  latitude, longitude: longtitude)
         
+        //geoCoder에 reverseGeocodeLocation 메서드로 전달 된다.
+        geoCoder.reverseGeocodeLocation(myLocation, completionHandler: { (placemarks, error) in
+            if error != nil {
+                print("에러 발생 \(error!.localizedDescription)")
+            }
+            //값이 있으면 배열 값으로 반환
+            if placemarks!.count > 0 {
+                let placemark = placemarks![0]
+                //딕셔너리 값으로 반환
+                let addressDictionary = placemark.addressDictionary
+                
+                //key 값을 이용해서 주소 찾기
+                let city = addressDictionary!["City"]
+                let state = addressDictionary!["State"]
+                
+                address2 = "\(state!) \(city!) 어딘가에서 당신에게 호감을 표시했습니다."
+                print("\(state!) \(city!) 어딘가에서 내가 \(uid)님에게 호감을 표시했습니다.")
+                
+                //firebase에 상대방 user key 값을 이용해서 분기해주기, 시간 넣어주기
+                
+                
+            }
+        })
+        
+    }
+    
+    //내 주변에 있는 사람들 데이터 가져와서 카드색션 형식으로 보여주기
+    func showMePeopleAroundMe(location:CLLocation, uid:String){
         //비동기 방식으로 나와 3km 이내 있는 사람을 호출한다.
         let myQuery = geoFire?.query(at: location, withRadius: 3)
         myQuery?.observe(.keyEntered, with: { (key:String!, location:CLLocation!) in
@@ -144,7 +185,7 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
             
             //나의 아이디 제외하고 근처에 있는 사람들 넣어주기
             if uid != key {
-            self.nearbyUserSet.append(key)
+                self.nearbyUserSet.append(key)
             }
             print("나와 3km이내 있는 사람 몇명? \(self.nearbyUserSet.count)")
             
@@ -204,7 +245,7 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
             self.present(alert, animated: true, completion: nil)
         }
     }
-    
+    //locationManager 관련 매서드
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("위치기반 기능 에러발생 : \(error.localizedDescription)")
     }
@@ -215,42 +256,5 @@ class MapViewController: UIViewController,CLLocationManagerDelegate {
         // 현재의 상태를 체크하고 그에 맞는 처리를 실시한다.
         print("didChangeAuthorization: \(status.rawValue)")
     }
-
     
-    //유저가 좋아요 누르면 현재 텍스트 위치 표시
-    func getTextAddress(latitude:Double, longtitude:Double, uid:String){
-        
-        print("넘어온 위도 : \(latitude) , 넘어온 경도 : \(longtitude)")
-        var address2 : String?
-        //역방향 지오코딩
-        let geoCoder = CLGeocoder()
-        //cllocatoin객체는 위도와 경로 좌표로 초기화 37.5096815,126.89033619999998
-        let myLocation = CLLocation(latitude:  latitude, longitude: longtitude)
-        
-        //geoCoder에 reverseGeocodeLocation 메서드로 전달 된다.
-        geoCoder.reverseGeocodeLocation(myLocation, completionHandler: { (placemarks, error) in
-            if error != nil {
-                print("에러 발생 \(error!.localizedDescription)")
-            }
-            //값이 있으면 배열 값으로 반환
-            if placemarks!.count > 0 {
-                let placemark = placemarks![0]
-                //딕셔너리 값으로 반환
-                let addressDictionary = placemark.addressDictionary
-                
-                //key 값을 이용해서 주소 찾기
-                let city = addressDictionary!["City"]
-                let state = addressDictionary!["State"]
-
-                address2 = "\(state!) \(city!) 어딘가에서 당신에게 호감을 표시했습니다."
-                print("\(state!) \(city!) 어딘가에서 내가 \(uid)님에게 호감을 표시했습니다.")
-                
-                //firebase에 상대방 user key 값을 이용해서 분기해주기
-                
-                
-            }
-        })
-        
-    }
-
 }
